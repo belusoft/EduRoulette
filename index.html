@@ -1,0 +1,1922 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎰 EduRoulette V3 — BeluSoft-Tchapy</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{
+  --bg:#0C0C1E;--bg2:#13132B;--bg3:#1A1A38;--bg4:#22224A;
+  --purple:#8B5CF6;--p2:#7C3AED;--pD:rgba(139,92,246,.15);
+  --gold:#F59E0B;--g2:#D97706;--gD:rgba(245,158,11,.12);
+  --green:#10B981;--red:#EF4444;--orange:#F97316;--cyan:#06B6D4;--yellow:#FACC15;
+  --text:#F1F5F9;--dim:rgba(241,245,249,.55);--muted:rgba(241,245,249,.22);
+  --border:rgba(255,255,255,.07);--card:rgba(255,255,255,.04);
+  --gP:rgba(139,92,246,.3);--gG:rgba(245,158,11,.3);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;opacity:.018;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+body>*{position:relative;z-index:1}
+
+.neon-brand{position:fixed;top:10px;right:14px;z-index:9999;font-family:'Bebas Neue',sans-serif;font-size:.85rem;letter-spacing:2px;pointer-events:none;user-select:none;animation:neonCycle 4s linear infinite}
+@keyframes neonCycle{
+  0%{color:#ff00ff;text-shadow:0 0 6px #ff00ff,0 0 14px #ff00ff,0 0 24px #ff00ff}
+  14%{color:#ff6600;text-shadow:0 0 6px #ff6600,0 0 14px #ff6600,0 0 24px #ff6600}
+  28%{color:#ffff00;text-shadow:0 0 6px #ffff00,0 0 14px #ffff00,0 0 24px #ffff00}
+  42%{color:#00ff88;text-shadow:0 0 6px #00ff88,0 0 14px #00ff88,0 0 24px #00ff88}
+  57%{color:#00cfff;text-shadow:0 0 6px #00cfff,0 0 14px #00cfff,0 0 24px #00cfff}
+  71%{color:#8b5cf6;text-shadow:0 0 6px #8b5cf6,0 0 14px #8b5cf6,0 0 24px #8b5cf6}
+  85%{color:#ff007f;text-shadow:0 0 6px #ff007f,0 0 14px #ff007f,0 0 24px #ff007f}
+  100%{color:#ff00ff;text-shadow:0 0 6px #ff00ff,0 0 14px #ff00ff,0 0 24px #ff00ff}
+}
+
+/* HEADER */
+header{display:flex;align-items:center;justify-content:space-between;padding:.9rem 1.5rem;background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.header-left{display:flex;align-items:center;gap:.7rem}
+.logo{font-size:1.8rem;filter:drop-shadow(0 0 12px var(--gold))}
+.header-left h1{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:2px;background:linear-gradient(135deg,var(--purple),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.v3{display:inline-block;background:var(--pD);border:1px solid rgba(139,92,246,.35);color:var(--purple);padding:.1rem .45rem;border-radius:5px;font-size:.6rem;font-weight:800;letter-spacing:1px;margin-left:.25rem;vertical-align:middle}
+.subtitle{font-size:.7rem;color:var(--dim);letter-spacing:.5px}
+.header-right{display:flex;gap:.4rem}
+.btn-icon-hdr{background:var(--card);border:1px solid var(--border);color:var(--dim);padding:.4rem .55rem;border-radius:8px;cursor:pointer;font-size:.95rem;transition:all .2s}
+.btn-icon-hdr:hover{background:var(--bg3);color:var(--text)}
+
+/* STEPPER */
+.stepper{display:flex;align-items:center;justify-content:center;gap:.4rem;padding:.7rem 1rem;background:var(--bg2);border-bottom:1px solid var(--border);overflow-x:auto;flex-wrap:nowrap}
+.step{font-size:.78rem;font-weight:800;color:var(--muted);padding:.35rem .8rem;border-radius:18px;border:1px solid transparent;white-space:nowrap;transition:all .25s;cursor:pointer}
+.step.active{background:var(--pD);color:var(--purple);border-color:rgba(139,92,246,.35)}
+.step.done{color:var(--green);background:rgba(16,185,129,.08);border-color:rgba(16,185,129,.25)}
+.step:hover:not(.active){color:var(--text)}
+.step-arrow{color:var(--muted);font-size:.95rem}
+
+/* SCREENS */
+.screen{display:none;padding:1.4rem 1rem;max-width:1100px;margin:0 auto;width:100%}
+.screen.active{display:block;animation:fadeUp .35s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* CARD */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:1.4rem;margin-bottom:1.1rem;box-shadow:0 2px 16px rgba(0,0,0,.18)}
+.card h2{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:1.5px;color:var(--purple);margin-bottom:1rem;display:flex;align-items:center;gap:.4rem}
+
+/* BUTTONS */
+.btn{border:none;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:800;border-radius:10px;transition:all .2s;outline:none;display:inline-flex;align-items:center;gap:.4rem}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.btn-primary{background:linear-gradient(135deg,var(--purple),var(--p2));color:#fff;padding:.85rem 1.6rem;font-size:.92rem;box-shadow:0 4px 18px var(--gP)}
+.btn-primary:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 28px var(--gP)}
+.btn-primary-sm{background:linear-gradient(135deg,var(--purple),var(--p2));color:#fff;padding:.6rem 1.1rem;font-size:.82rem;border:none;cursor:pointer;font-weight:800;border-radius:9px;transition:all .2s}
+.btn-primary-sm:hover{transform:translateY(-1px);box-shadow:0 4px 16px var(--gP)}
+.btn-secondary{background:var(--card);border:1px solid var(--border);color:var(--text);padding:.65rem 1.1rem;font-size:.85rem;font-weight:800;border-radius:9px;cursor:pointer;transition:all .2s;font-family:'Nunito',sans-serif}
+.btn-secondary:hover{background:var(--bg3);border-color:var(--purple)}
+.btn-small{padding:.35rem .8rem;font-size:.75rem;background:var(--card);border:1px solid var(--border);color:var(--dim);border-radius:7px;cursor:pointer;transition:all .2s;font-family:'Nunito',sans-serif;font-weight:700}
+.btn-small:hover{color:var(--text);border-color:var(--purple)}
+.btn-small.danger{color:var(--red);border-color:rgba(239,68,68,.25)}
+.btn-small.danger:hover{background:rgba(239,68,68,.1);border-color:var(--red)}
+.btn-text{background:none;border:none;color:var(--purple);cursor:pointer;font-size:.8rem;font-weight:700;font-family:'Nunito',sans-serif;text-decoration:underline}
+.btn-row{display:flex;gap:.6rem;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-top:1rem}
+
+/* FORM */
+input,select,textarea{background:var(--bg3);border:1.5px solid var(--border);border-radius:9px;color:var(--text);padding:.65rem .9rem;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:600;transition:border-color .2s;width:100%}
+select{appearance:none;cursor:pointer;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M3 5l3 3 3-3' stroke='%2394a3b8' stroke-width='1.5' fill='none'/></svg>");background-repeat:no-repeat;background-position:right .8rem center;padding-right:2rem}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 3px var(--gP)}
+textarea{resize:vertical;min-height:70px;font-weight:400}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.8rem}
+.form-group label{display:block;font-size:.72rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--dim);margin-bottom:.35rem}
+.input-classname{font-weight:700}
+
+/* DROP ZONE */
+.drop-zone{border:2px dashed var(--border);border-radius:14px;padding:1.8rem 1rem;text-align:center;transition:all .2s;background:var(--card)}
+.drop-zone.drag-over{border-color:var(--purple);background:var(--pD)}
+.drop-icon{font-size:2.2rem;margin-bottom:.5rem;filter:drop-shadow(0 0 10px var(--purple))}
+.drop-text{font-size:.95rem;font-weight:700;margin-bottom:.3rem}
+.drop-sub{color:var(--dim);font-size:.78rem;margin:.4rem 0}
+.btn-upload{display:inline-block;background:linear-gradient(135deg,var(--purple),var(--p2));color:#fff;padding:.6rem 1.3rem;border-radius:9px;cursor:pointer;font-weight:800;font-size:.85rem;transition:all .2s}
+.btn-upload:hover{transform:translateY(-1px);box-shadow:0 4px 16px var(--gP)}
+
+/* SAVED CLASSES */
+.saved-classes-label{font-size:.72rem;font-weight:800;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:.5rem}
+.saved-classes-list{display:flex;flex-direction:column;gap:.4rem;margin-bottom:1rem}
+.saved-class-item{display:flex;align-items:center;gap:.7rem;padding:.7rem .9rem;border-radius:10px;border:1px solid var(--border);background:var(--card);cursor:pointer;transition:all .2s}
+.saved-class-item:hover{border-color:var(--purple);background:var(--pD)}
+.saved-class-item.active{border-color:var(--gold);background:var(--gD)}
+.saved-class-item .sc-icon{font-size:1.2rem}
+.saved-class-item .sc-info{flex:1}
+.saved-class-item .sc-name{font-weight:800;font-size:.9rem}
+.saved-class-item .sc-count{font-size:.72rem;color:var(--dim)}
+.separator-or{display:flex;align-items:center;gap:.5rem;margin:1rem 0;color:var(--muted);font-size:.75rem}
+.separator-or::before,.separator-or::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* CLASSE NAMING & LOADED */
+.classe-naming{padding:1rem;background:var(--bg3);border-radius:11px;border:1px solid var(--border);margin-top:.8rem}
+.naming-header{font-size:.85rem;margin-bottom:.6rem}
+.naming-row{display:flex;gap:.5rem;margin-bottom:.7rem}
+.naming-row input{flex:1}
+.eleves-preview{font-size:.78rem;color:var(--dim);max-height:120px;overflow-y:auto;line-height:1.5}
+.classe-loaded{margin-top:.5rem}
+.classe-info{display:flex;align-items:center;gap:.7rem;padding:.7rem .9rem;background:var(--gD);border:1px solid rgba(245,158,11,.25);border-radius:11px}
+.classe-icon{font-size:1.4rem}
+.classe-nom{font-weight:800;font-size:1rem}
+.classe-count{font-size:.78rem;color:var(--dim)}
+.eleves-list-toggle{margin-top:.6rem}
+.eleves-list{margin-top:.5rem;padding:.7rem;background:var(--bg3);border-radius:9px;font-size:.8rem;max-height:180px;overflow-y:auto}
+.eleves-list ul{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.25rem}
+.eleves-list li{padding:.2rem .4rem}
+.add-another{margin-top:.7rem;display:flex;gap:.5rem;flex-wrap:wrap}
+
+/* OBJECTIF BAR */
+.objectif-bar{margin-top:.8rem;padding:.6rem 1rem;background:var(--gD);border-left:3px solid var(--gold);border-radius:8px;font-size:.82rem;color:var(--gold)}
+
+/* THEMES GRID */
+.themes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.6rem;margin-bottom:.8rem}
+.theme-card{padding:.8rem .9rem;border-radius:10px;border:1.5px solid var(--border);background:var(--card);cursor:pointer;transition:all .2s;display:flex;flex-direction:column;gap:.25rem}
+.theme-card:hover{border-color:var(--gold);background:var(--gD)}
+.theme-card.selected{border-color:var(--gold);background:var(--gD);box-shadow:0 0 0 2px rgba(245,158,11,.2)}
+.theme-card .tc-name{font-weight:700;font-size:.85rem;line-height:1.3}
+.theme-card .tc-meta{font-size:.7rem;color:var(--dim)}
+.theme-card .tc-cycle{display:inline-block;font-size:.62rem;padding:.1rem .4rem;border-radius:4px;background:var(--bg3);color:var(--purple);font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.theme-card .tc-custom{display:inline-block;font-size:.62rem;padding:.1rem .4rem;border-radius:4px;background:rgba(6,182,212,.15);color:var(--cyan);font-weight:800;margin-left:.25rem}
+.themes-filter{display:flex;gap:.4rem;margin-bottom:.7rem;flex-wrap:wrap}
+.themes-filter button{flex:1;min-width:80px;padding:.45rem .7rem;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--dim);font-weight:800;font-size:.75rem;cursor:pointer;transition:all .2s;font-family:'Nunito',sans-serif}
+.themes-filter button.active{border-color:var(--purple);background:var(--pD);color:var(--purple)}
+
+/* DIFFICULTY */
+.diff-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.5rem}
+.diff-btn{padding:.7rem .8rem;border-radius:10px;border:1.5px solid var(--border);background:var(--card);color:var(--dim);font-weight:800;font-size:.82rem;cursor:pointer;transition:all .2s;font-family:'Nunito',sans-serif;text-align:center}
+.diff-btn:hover{transform:translateY(-1px)}
+.diff-btn.active{transform:translateY(-2px)}
+.diff-btn.facile.active{border-color:var(--green);background:rgba(16,185,129,.12);color:var(--green)}
+.diff-btn.moyen.active{border-color:var(--orange);background:rgba(249,115,22,.12);color:var(--orange)}
+.diff-btn.difficile.active{border-color:var(--red);background:rgba(239,68,68,.12);color:var(--red)}
+.diff-btn.active[data-diff="all"]{border-color:var(--gold);background:var(--gD);color:var(--gold)}
+.questions-available{margin-top:.6rem;text-align:center;color:var(--dim);font-size:.82rem}
+
+/* SLOT MACHINE */
+.config-tags{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1rem}
+.cfg-tag{padding:.25rem .7rem;border-radius:14px;font-size:.72rem;font-weight:800;background:var(--pD);color:var(--purple);border:1px solid rgba(139,92,246,.25)}
+.slot-area{display:flex;gap:.7rem;justify-content:center;flex-wrap:wrap;margin:1.4rem 0;min-height:120px;align-items:center}
+.slot{background:linear-gradient(135deg,var(--bg3),var(--bg4));border:2px solid var(--border);border-radius:14px;padding:1.1rem .9rem;min-width:130px;max-width:170px;text-align:center;transition:all .3s;flex:0 1 150px}
+.slot.spinning{border-color:var(--gold);animation:slotPulse .5s ease infinite}
+.slot.locked{border-color:var(--green);background:linear-gradient(135deg,rgba(16,185,129,.1),var(--bg3))}
+@keyframes slotPulse{0%,100%{transform:scale(1);box-shadow:0 0 0 0 var(--gG)}50%{transform:scale(1.04);box-shadow:0 0 0 8px transparent}}
+.slot .slot-num{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--gold);line-height:1}
+.slot .slot-name{font-weight:800;font-size:1rem;margin-top:.4rem;line-height:1.2;min-height:1.4em;font-family:'Bebas Neue',sans-serif;letter-spacing:1px}
+.spin-controls{display:flex;justify-content:center;margin-bottom:.8rem}
+.btn-spin{background:linear-gradient(135deg,var(--gold),var(--g2));color:#0C0C1E;padding:.95rem 2.4rem;font-size:1.05rem;font-weight:900;letter-spacing:1px;border-radius:11px;border:none;cursor:pointer;box-shadow:0 4px 24px var(--gG);transition:all .2s;font-family:'Nunito',sans-serif}
+.btn-spin:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 36px var(--gG)}
+.btn-spin:disabled{opacity:.4;cursor:not-allowed}
+.equity-info{font-size:.78rem;color:var(--dim);text-align:center;margin-top:.6rem}
+
+/* QUESTION */
+.question-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.7rem}
+.eleve-name{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--gold);letter-spacing:2px;text-shadow:0 0 16px rgba(245,158,11,.3)}
+.question-counter{font-size:.78rem;color:var(--dim);font-weight:700}
+.timer-bar-container{position:relative;background:var(--bg3);height:36px;border-radius:18px;overflow:hidden;margin-bottom:.8rem;border:1px solid var(--border)}
+.timer-bar{height:100%;background:linear-gradient(90deg,var(--green),var(--orange));border-radius:18px;transition:width 1s linear,background .5s}
+.timer-bar.warning{background:linear-gradient(90deg,var(--orange),var(--red))}
+.timer-bar.danger{background:linear-gradient(90deg,var(--red),#7c2d12)}
+.timer-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Bebas Neue',sans-serif;font-size:1.05rem;color:#fff;letter-spacing:1px;text-shadow:0 0 6px rgba(0,0,0,.5)}
+.btn-icon-sm{position:absolute;top:50%;right:.5rem;transform:translateY(-50%);background:rgba(0,0,0,.3);border:none;color:#fff;width:24px;height:24px;border-radius:50%;cursor:pointer;font-size:.7rem}
+.question-card{padding:1.2rem;background:var(--bg3);border-radius:14px;border:1px solid var(--border);margin-bottom:.9rem}
+.q-meta{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.8rem}
+.theme-badge{padding:.2rem .65rem;background:var(--pD);border:1px solid rgba(139,92,246,.25);border-radius:6px;font-size:.7rem;font-weight:800;color:var(--purple)}
+.diff-badge{padding:.2rem .65rem;border-radius:6px;font-size:.7rem;font-weight:800}
+.diff-badge.facile{background:rgba(16,185,129,.15);color:var(--green);border:1px solid rgba(16,185,129,.25)}
+.diff-badge.moyen{background:rgba(249,115,22,.15);color:var(--orange);border:1px solid rgba(249,115,22,.25)}
+.diff-badge.difficile{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.25)}
+.pts-badge{padding:.2rem .65rem;background:var(--gD);border:1px solid rgba(245,158,11,.25);border-radius:6px;font-size:.7rem;font-weight:800;color:var(--gold)}
+.question-text{font-size:1.05rem;line-height:1.5;font-weight:700;margin-bottom:.6rem}
+.answer-box{margin-top:.7rem;padding:.9rem 1rem;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:10px;animation:fadeUp .3s ease}
+.answer-label{font-size:.7rem;font-weight:800;color:var(--green);letter-spacing:1px;margin-bottom:.3rem}
+.answer-text{font-size:.92rem;line-height:1.5;color:var(--text)}
+
+/* SCORE */
+.score-section{padding:1.1rem;background:var(--bg3);border-radius:14px;border:1px solid var(--border);margin-top:.8rem}
+.score-label{font-size:.85rem;font-weight:800;margin-bottom:.4rem}
+.score-max-info{font-size:.78rem;color:var(--dim);margin-bottom:.7rem}
+.score-buttons{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:.5rem;margin-bottom:.8rem}
+.score-btn{padding:.85rem .5rem;border-radius:10px;border:1.5px solid var(--border);background:var(--card);color:var(--dim);font-weight:800;font-size:.85rem;cursor:pointer;transition:all .2s;font-family:'Nunito',sans-serif;text-align:center}
+.score-btn:hover{transform:translateY(-1px)}
+.score-btn.zero.selected{border-color:var(--red);background:rgba(239,68,68,.12);color:var(--red)}
+.score-btn.half.selected{border-color:var(--orange);background:rgba(249,115,22,.12);color:var(--orange)}
+.score-btn.max.selected{border-color:var(--green);background:rgba(16,185,129,.12);color:var(--green)}
+.score-manual{display:flex;align-items:center;gap:.4rem;padding:.5rem .7rem;border:1.5px solid var(--border);border-radius:10px;background:var(--card)}
+.score-manual input{width:50px;padding:.3rem;text-align:center;font-size:.85rem;font-weight:800}
+.score-manual span{font-size:.85rem;color:var(--dim);font-weight:800}
+
+/* BILAN */
+.bilan-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.7rem;margin-bottom:.8rem}
+.stat-card{background:var(--bg3);padding:.9rem;border-radius:11px;border:1px solid var(--border);text-align:center}
+.stat-card .stat-value{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--gold);letter-spacing:1px}
+.stat-card .stat-label{font-size:.72rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px}
+.bilan-legend{display:flex;gap:1rem;font-size:.75rem;color:var(--dim);margin-bottom:.7rem;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:.35rem}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.dot.green{background:var(--green)}.dot.orange{background:var(--orange)}.dot.red{background:var(--red)}
+.bilan-table-container{overflow-x:auto}
+.bilan-table{width:100%;border-collapse:collapse;font-size:.85rem}
+.bilan-table th{text-align:left;padding:.6rem .8rem;background:var(--bg3);border-bottom:2px solid var(--border);font-size:.7rem;letter-spacing:1px;color:var(--dim);text-transform:uppercase}
+.bilan-table td{padding:.6rem .8rem;border-bottom:1px solid var(--border)}
+.bilan-table tr:hover{background:var(--bg3)}
+.progress-bar-bg{width:120px;height:14px;background:var(--bg4);border-radius:7px;overflow:hidden;display:inline-block;vertical-align:middle}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--green),var(--gold));transition:width .3s}
+.progress-bar.low{background:var(--red)}
+.progress-bar.med{background:var(--orange)}
+
+/* SETTINGS */
+.settings-group{margin-bottom:.9rem}
+.settings-group label{display:block;font-size:.75rem;font-weight:800;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:.35rem}
+.settings-row{display:flex;gap:.5rem}
+.settings-row input{flex:1}
+.settings-hint{font-size:.72rem;color:var(--muted);margin-top:.3rem;font-style:italic}
+.script-test-result{padding:.6rem .9rem;border-radius:8px;font-size:.82rem;font-weight:700;margin-top:.5rem}
+.script-test-result.ok{background:rgba(16,185,129,.12);color:var(--green);border:1px solid rgba(16,185,129,.25)}
+.script-test-result.ko{background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.25)}
+.sync-status{margin-top:.5rem;padding:.4rem .7rem;border-radius:7px;font-size:.75rem;font-weight:700}
+.sync-status.ok{background:rgba(16,185,129,.1);color:var(--green)}
+.sync-status.ko{background:rgba(239,68,68,.1);color:var(--red)}
+.sync-status.pending{background:rgba(245,158,11,.1);color:var(--gold)}
+
+/* MODAL */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(8px);z-index:9000;align-items:center;justify-content:center;padding:1rem}
+.overlay.open{display:flex}
+.modal-content{background:var(--bg2);border:1px solid var(--border);border-radius:18px;width:100%;max-width:760px;max-height:90vh;overflow-y:auto;display:flex;flex-direction:column}
+.modal-header{display:flex;justify-content:space-between;align-items:center;padding:1.2rem 1.4rem;border-bottom:1px solid var(--border)}
+.modal-header h2{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--purple);letter-spacing:1.5px}
+.modal-body{padding:1.2rem 1.4rem;overflow-y:auto;flex:1}
+.modal-footer{padding:1rem 1.4rem;border-top:1px solid var(--border);display:flex;gap:.6rem;justify-content:flex-end}
+.modal-overlay{display:none}.modal-overlay:not(.hidden){display:flex}
+
+/* CODES MODAL */
+.codes-actions{display:flex;gap:.6rem;margin-bottom:1rem;flex-wrap:wrap}
+.codes-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.7rem}
+.code-card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:.7rem .9rem;text-align:center}
+.code-card .cc-name{font-weight:800;font-size:.9rem;margin-bottom:.3rem}
+.code-card .cc-code{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--gold);letter-spacing:2px}
+.code-card .cc-qr{margin-top:.5rem;background:#fff;padding:6px;border-radius:6px;display:inline-block}
+
+/* THEME EDITOR */
+.editor-tabs{display:flex;gap:.4rem;margin-bottom:1rem;border-bottom:1px solid var(--border);padding-bottom:.6rem;flex-wrap:wrap}
+.editor-tab{padding:.5rem .9rem;border-radius:8px;border:1px solid transparent;background:var(--card);color:var(--dim);font-weight:800;font-size:.78rem;cursor:pointer;transition:all .2s;font-family:'Nunito',sans-serif}
+.editor-tab.active{background:var(--pD);color:var(--purple);border-color:rgba(139,92,246,.35)}
+.editor-list{display:flex;flex-direction:column;gap:.5rem;max-height:340px;overflow-y:auto}
+.editor-item{display:flex;align-items:center;gap:.6rem;padding:.6rem .85rem;background:var(--bg3);border-radius:9px;border:1px solid var(--border)}
+.editor-item .ei-info{flex:1;min-width:0}
+.editor-item .ei-title{font-weight:800;font-size:.85rem}
+.editor-item .ei-meta{font-size:.72rem;color:var(--dim);margin-top:.1rem}
+.editor-item .ei-acts{display:flex;gap:.3rem}
+.editor-form{display:flex;flex-direction:column;gap:.7rem}
+.editor-form .form-row{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+.editor-form label{font-size:.72rem;font-weight:800;color:var(--dim);text-transform:uppercase;letter-spacing:1px}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.4rem;right:1.4rem;background:var(--bg2);border:1px solid var(--border);border-radius:11px;padding:.7rem 1rem;font-size:.82rem;font-weight:700;animation:slideIn .3s ease;z-index:9999;box-shadow:0 6px 32px rgba(0,0,0,.4);max-width:90vw}
+@keyframes slideIn{from{transform:translateX(110%);opacity:0}to{transform:translateX(0);opacity:1}}
+.toast.success{border-color:var(--green);color:var(--green)}
+.toast.error{border-color:var(--red);color:var(--red)}
+.toast.info{border-color:var(--purple);color:var(--purple)}
+
+/* MEDIA QUERIES */
+@media(max-width:640px){
+  header{padding:.7rem 1rem}
+  .header-left h1{font-size:1.2rem}
+  .subtitle{display:none}
+  .stepper{padding:.5rem .6rem;gap:.2rem;font-size:.7rem}
+  .step{padding:.25rem .5rem;font-size:.7rem}
+  .step-arrow{font-size:.7rem}
+  .screen{padding:1rem .6rem}
+  .card{padding:1rem;border-radius:13px}
+  .card h2{font-size:1.1rem}
+  .form-grid{grid-template-columns:1fr}
+  .themes-grid{grid-template-columns:1fr 1fr}
+  .diff-row{grid-template-columns:1fr 1fr}
+  .slot-area{gap:.4rem}
+  .slot{padding:.7rem .5rem;min-width:90px}
+  .eleve-name{font-size:1.2rem}
+  .question-text{font-size:.95rem}
+  .score-buttons{grid-template-columns:1fr 1fr}
+  .neon-brand{font-size:.7rem;top:8px;right:8px}
+}
+
+.hidden{display:none!important}
+.print-only{display:none}
+@media print{
+  body{background:#fff;color:#000}
+  header,.stepper,.btn,.btn-primary,.btn-secondary,.btn-row,.codes-actions,.modal-header button,.btn-icon-hdr,.neon-brand{display:none!important}
+  .modal-content{box-shadow:none;border:none;max-height:none;overflow:visible}
+  .overlay{position:static;background:#fff;padding:0;display:block!important}
+  .code-card{break-inside:avoid;border:1px solid #999;page-break-inside:avoid}
+  .codes-list{display:grid;grid-template-columns:repeat(2,1fr);gap:.5rem}
+  .print-only{display:block}
+  .card{box-shadow:none;border:1px solid #ccc;background:#fff;color:#000}
+  .card h2{color:#7C3AED}
+  .bilan-table th{background:#f3f0ff;color:#000}
+  .bilan-table td{color:#000}
+}
+
+.badge-beta{display:inline-block;background:var(--gD);color:var(--gold);padding:.1rem .45rem;border-radius:5px;font-size:.65rem;font-weight:800;letter-spacing:.5px;margin-left:.3rem}
+</style>
+</head>
+<body>
+
+<div class="neon-brand">✦ Création BeluSoft-Tchapy ✦</div>
+
+<header>
+  <div class="header-left">
+    <span class="logo">🎰</span>
+    <div>
+      <h1>EduRoulette <span class="v3">V3</span></h1>
+      <div class="subtitle" id="header-info">Technologie · 460 questions intégrées</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <button class="btn-icon-hdr" id="btn-mute" title="Son on/off" onclick="App.toggleMute()">🔊</button>
+    <button class="btn-icon-hdr" title="Éditeur de questions" onclick="App.editor.open()">✏️</button>
+    <button class="btn-icon-hdr" title="Réinitialiser les données" onclick="App.storage.resetConfirm()">🗑</button>
+  </div>
+</header>
+
+<div class="stepper" id="stepper">
+  <div class="step active" data-step="0" onclick="App.goTo('config')">① Config</div>
+  <div class="step-arrow">›</div>
+  <div class="step" data-step="1" onclick="App.goTo('theme')">② Thème</div>
+  <div class="step-arrow">›</div>
+  <div class="step" data-step="2" onclick="App.goTo('tirage')">③ Tirage</div>
+  <div class="step-arrow">›</div>
+  <div class="step" data-step="3">④ Question</div>
+  <div class="step-arrow">›</div>
+  <div class="step" data-step="4">⑤ Bilan</div>
+</div>
+
+<!-- ═══════════ ÉCRAN 1 : CONFIG ═══════════ -->
+<div class="screen active" id="screen-config">
+  <div class="card">
+    <h2>🏫 Mes classes</h2>
+    <div id="saved-classes-section" class="hidden">
+      <div class="saved-classes-label">Classes enregistrées :</div>
+      <div class="saved-classes-list" id="saved-classes-list"></div>
+      <div class="separator-or"><span>ou importer une nouvelle classe</span></div>
+    </div>
+    <div class="drop-zone" id="drop-zone">
+      <div class="drop-icon">📂</div>
+      <div class="drop-text">Glisser-déposer le CSV Pronote ici</div>
+      <div class="drop-sub">ou</div>
+      <label class="btn-upload">
+        Choisir un fichier CSV
+        <input type="file" id="file-input" accept=".csv" hidden>
+      </label>
+    </div>
+    <div class="classe-naming hidden" id="classe-naming">
+      <div class="naming-header">📋 <strong id="naming-count">—</strong> élèves détectés. Donnez un nom à cette classe :</div>
+      <div class="naming-row">
+        <input type="text" id="classe-name-input" placeholder="Ex : 3ème1, 4èmeA..." class="input-classname">
+        <button class="btn-primary-sm" onclick="App.confirmClasse()">✅ Enregistrer</button>
+      </div>
+      <div class="eleves-preview" id="eleves-preview"></div>
+    </div>
+    <div class="classe-loaded hidden" id="classe-loaded">
+      <div class="classe-info">
+        <span class="classe-icon">✅</span>
+        <div style="flex:1">
+          <div class="classe-nom" id="classe-nom">—</div>
+          <div class="classe-count" id="classe-count">— élèves</div>
+        </div>
+        <button class="btn-small" onclick="App.showClasseList()">Changer</button>
+      </div>
+      <div class="eleves-list-toggle">
+        <button class="btn-text" onclick="App.toggleElevesList()">👁 Voir la liste des élèves</button>
+        <button class="btn-text" onclick="App.codes.show()" style="margin-left:1rem">📋 Codes élèves</button>
+      </div>
+      <div class="eleves-list hidden" id="eleves-list-active"></div>
+      <div class="sync-status hidden" id="sync-status"></div>
+      <div class="add-another">
+        <button class="btn-secondary" onclick="App.addAnotherClasse()">➕ Ajouter une autre classe</button>
+        <button class="btn-small danger" onclick="App.deleteCurrentClasse()">🗑 Supprimer cette classe</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>⚙️ Paramètres de la session</h2>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Niveau</label>
+        <select id="sel-niveau">
+          <option value="6eme">6ème — Cycle 3</option>
+          <option value="5eme">5ème — Cycle 4</option>
+          <option value="4eme" selected>4ème — Cycle 4</option>
+          <option value="3eme">3ème — Cycle 4</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Élèves à tirer par session</label>
+        <select id="sel-nb-eleves">
+          <option value="2">2 élèves</option>
+          <option value="3" selected>3 élèves</option>
+          <option value="4">4 élèves</option>
+          <option value="5">5 élèves</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Questions par élève</label>
+        <select id="sel-nb-questions">
+          <option value="1">1 question</option>
+          <option value="2" selected>2 questions</option>
+          <option value="3">3 questions</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Mode tirage</label>
+        <select id="sel-mode">
+          <option value="individuel">Individuel</option>
+          <option value="binome">Binôme (2 ensemble)</option>
+          <option value="groupe">Groupe</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Chronomètre par question</label>
+        <select id="sel-timer">
+          <option value="0">Sans chrono</option>
+          <option value="20">20 secondes</option>
+          <option value="30" selected>30 secondes</option>
+          <option value="45">45 secondes</option>
+          <option value="60">1 minute</option>
+          <option value="90">1 min 30</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Objectif min. par élève</label>
+        <select id="sel-objectif">
+          <option value="10">10 questions</option>
+          <option value="18" selected>18 questions</option>
+          <option value="25">25 questions</option>
+          <option value="30">30 questions</option>
+        </select>
+      </div>
+    </div>
+    <div class="objectif-bar">
+      <span>🎯 Objectif : <strong id="obj-display">18 questions minimum</strong> par élève sur la période</span>
+    </div>
+  </div>
+
+  <div class="card" id="card-settings">
+    <h2 style="cursor:pointer" onclick="App.settings.toggle()">
+      🔗 Connexion Google (optionnel) <span id="settings-arrow" style="font-size:.8rem">▼</span>
+    </h2>
+    <div id="settings-panel" class="hidden">
+      <p style="font-size:.82rem;color:var(--dim);margin-bottom:.8rem">Permet de synchroniser les données avec un Google Sheet et d'activer le portail élèves.</p>
+      <div class="settings-group">
+        <label>URL Google Apps Script</label>
+        <div class="settings-row">
+          <input type="text" id="script-url-input" placeholder="https://script.google.com/macros/s/.../exec">
+          <button class="btn-primary-sm" onclick="App.settings.testConnection()">🔍 Tester</button>
+        </div>
+        <div id="script-test-result" class="script-test-result hidden"></div>
+      </div>
+      <button class="btn-primary-sm" onclick="App.settings.save()">💾 Enregistrer</button>
+      <button class="btn-secondary" onclick="App.settings.showAppsScriptCode()" style="margin-left:.5rem">📋 Voir le code Apps Script</button>
+    </div>
+  </div>
+
+  <button class="btn-primary" id="btn-to-theme" onclick="App.goToTheme()">
+    Choisir le thème →
+  </button>
+</div>
+
+<!-- ═══════════ ÉCRAN 2 : THÈME ═══════════ -->
+<div class="screen" id="screen-theme">
+  <div class="card">
+    <h2>📚 Thème abordé</h2>
+    <div class="themes-filter" id="themes-filter">
+      <button class="active" data-cycle="all" onclick="App.filterThemes('all',this)">🎲 Tous</button>
+      <button data-cycle="cycle3" onclick="App.filterThemes('cycle3',this)">Cycle 3</button>
+      <button data-cycle="cycle4" onclick="App.filterThemes('cycle4',this)">Cycle 4</button>
+      <button data-cycle="extra" onclick="App.filterThemes('extra',this)">Réseaux/Domotique/IA</button>
+      <button data-cycle="custom" onclick="App.filterThemes('custom',this)">Mes thèmes perso</button>
+    </div>
+    <div class="themes-grid" id="themes-grid"></div>
+  </div>
+
+  <div class="card">
+    <h2>🎯 Niveau de difficulté</h2>
+    <div class="diff-row">
+      <button class="diff-btn active" data-diff="all" onclick="App.setDiff(this)">🎲 Tout — barème mixte</button>
+      <button class="diff-btn facile" data-diff="facile" onclick="App.setDiff(this)">🟢 Facile — 2 pts</button>
+      <button class="diff-btn moyen" data-diff="moyen" onclick="App.setDiff(this)">🟡 Moyen — 5 pts</button>
+      <button class="diff-btn difficile" data-diff="difficile" onclick="App.setDiff(this)">🔴 Difficile — 10 pts</button>
+    </div>
+    <div class="questions-available" id="questions-available">— questions disponibles</div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-secondary" onclick="App.goTo('config')">← Retour</button>
+    <button class="btn-primary" onclick="App.goToTirage()">Lancer le tirage 🎰</button>
+  </div>
+</div>
+
+<!-- ═══════════ ÉCRAN 3 : TIRAGE ═══════════ -->
+<div class="screen" id="screen-tirage">
+  <div class="card">
+    <h2>🎰 Tirage aléatoire</h2>
+    <div class="config-tags" id="config-tags"></div>
+    <div class="slot-area" id="slot-area"></div>
+    <div class="spin-controls">
+      <button class="btn-spin" id="btn-spin" onclick="App.slotMachine.toggle()">🎲 Lancer le tirage</button>
+    </div>
+    <div class="equity-info" id="equity-info"></div>
+  </div>
+  <div class="btn-row">
+    <button class="btn-secondary" onclick="App.goTo('theme')">← Retour</button>
+    <button class="btn-primary" id="btn-start-questions" onclick="App.startQuestions()" disabled>Commencer les questions →</button>
+  </div>
+</div>
+
+<!-- ═══════════ ÉCRAN 4 : QUESTION ═══════════ -->
+<div class="screen" id="screen-question">
+  <div class="card">
+    <div class="question-header">
+      <div class="eleve-name" id="q-eleve-name">—</div>
+      <div class="question-counter" id="q-counter">Question 1/2</div>
+    </div>
+    <div class="timer-bar-container hidden" id="timer-container">
+      <div class="timer-bar" id="timer-bar"></div>
+      <div class="timer-text" id="timer-text">30s</div>
+      <button class="btn-icon-sm" onclick="App.timer.toggle()">⏸</button>
+    </div>
+    <div class="question-card">
+      <div class="q-meta">
+        <span class="theme-badge" id="q-theme-badge">—</span>
+        <span class="diff-badge" id="q-diff-badge">—</span>
+        <span class="pts-badge" id="q-pts-badge">— pts</span>
+      </div>
+      <div class="question-text" id="q-text">—</div>
+      <div class="answer-box hidden" id="answer-box">
+        <div class="answer-label">✅ RÉPONSE ATTENDUE (visible par le prof)</div>
+        <div class="answer-text" id="answer-text">—</div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="App.showAnswer()">👁 Voir la réponse</button>
+      <button class="btn-secondary" onclick="App.nextQuestion()">Passer ›</button>
+    </div>
+    <div class="score-section" id="score-section">
+      <div class="score-label">Note pour <span id="score-eleve-name">—</span> :</div>
+      <div class="score-max-info">Cette question vaut <strong id="score-pts-max">—</strong> pts</div>
+      <div class="score-buttons">
+        <button class="score-btn zero" data-val="0" onclick="App.setScore(0)">0 pt — ❌</button>
+        <button class="score-btn half" data-val="half" onclick="App.setScoreHalf()">½ — 🔸</button>
+        <button class="score-btn max" data-val="max" onclick="App.setScoreMax()">Max — ✅</button>
+        <div class="score-manual">
+          <input type="number" id="score-input" min="0" placeholder="?" oninput="App.setScoreManual(this.value)">
+          <span id="score-pts-display">/—</span>
+        </div>
+      </div>
+      <button class="btn-primary" id="btn-validate-score" onclick="App.validateScore()">Valider et continuer →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ ÉCRAN 5 : BILAN ═══════════ -->
+<div class="screen" id="screen-bilan">
+  <div class="card">
+    <h2>📊 Bilan de la session</h2>
+    <div class="bilan-stats" id="bilan-stats"></div>
+  </div>
+  <div class="card">
+    <h2>📋 Suivi de la classe — <span id="bilan-classe-nom">—</span></h2>
+    <div class="bilan-legend">
+      <span class="legend-item"><span class="dot green"></span> Objectif atteint</span>
+      <span class="legend-item"><span class="dot orange"></span> En cours</span>
+      <span class="legend-item"><span class="dot red"></span> En retard (&lt; 30%)</span>
+    </div>
+    <div class="bilan-table-container">
+      <table class="bilan-table" id="bilan-table">
+        <thead>
+          <tr><th>Élève</th><th>Questions</th><th>Progression</th><th>Note moy.</th><th>Cycle</th></tr>
+        </thead>
+        <tbody id="bilan-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="btn-secondary" onclick="App.exportCSV()">📥 Exporter CSV</button>
+    <button class="btn-secondary" onclick="window.print()">🖨 Imprimer</button>
+    <button class="btn-secondary" onclick="App.generateGoogleForm()">📋 Générer Google Form</button>
+    <button class="btn-primary" onclick="App.nouvelleSession()">🔄 Nouvelle session</button>
+  </div>
+</div>
+
+<!-- ═══════════ MODAL : CODES ÉLÈVES ═══════════ -->
+<div class="overlay" id="codes-modal">
+  <div class="modal-content" style="max-width:1000px">
+    <div class="modal-header">
+      <h2>📋 Codes élèves — <span id="codes-classe-nom">—</span></h2>
+      <button class="btn-icon-hdr" onclick="App.codes.hide()">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:.85rem;color:var(--dim);margin-bottom:.7rem">Chaque élève dispose d'un code pour consulter ses notes sur la page <code>eleve.html</code>.</p>
+      <div class="codes-actions">
+        <button class="btn-secondary" onclick="App.codes.print()">🖨 Imprimer la feuille</button>
+        <button class="btn-secondary" onclick="App.codes.exportCSV()">📥 Exporter CSV</button>
+        <button class="btn-secondary" onclick="App.codes.syncToGAS()">☁️ Sync Google Sheet</button>
+      </div>
+      <div class="print-only" style="margin-bottom:1rem">
+        <h2 style="text-align:center;margin-bottom:.5rem">🎰 EduRoulette — Codes d'accès élèves</h2>
+        <p style="text-align:center;font-size:.9rem;margin-bottom:1rem">Conserve ce code soigneusement. URL : <strong id="print-url">eleve.html</strong></p>
+      </div>
+      <div id="codes-list" class="codes-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ MODAL : ÉDITEUR ═══════════ -->
+<div class="overlay" id="editor-modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>✏️ Éditeur de thèmes et questions</h2>
+      <button class="btn-icon-hdr" onclick="App.editor.close()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="editor-tabs">
+        <button class="editor-tab active" data-etab="themes" onclick="App.editor.switchTab('themes',this)">📚 Thèmes</button>
+        <button class="editor-tab" data-etab="questions" onclick="App.editor.switchTab('questions',this)">❓ Questions</button>
+        <button class="editor-tab" data-etab="add" onclick="App.editor.switchTab('add',this)">➕ Ajouter</button>
+      </div>
+
+      <div id="editor-panel-themes">
+        <p style="font-size:.82rem;color:var(--dim);margin-bottom:.6rem">Tes thèmes personnalisés. Les thèmes officiels sont en lecture seule.</p>
+        <div id="editor-themes-list" class="editor-list"></div>
+      </div>
+
+      <div id="editor-panel-questions" style="display:none">
+        <div style="margin-bottom:.6rem">
+          <label style="font-size:.72rem;font-weight:800;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:.3rem;display:block">Choisir un thème</label>
+          <select id="editor-theme-select" onchange="App.editor.renderQuestions()"></select>
+        </div>
+        <div id="editor-questions-list" class="editor-list"></div>
+      </div>
+
+      <div id="editor-panel-add" style="display:none">
+        <div class="editor-form">
+          <div class="form-row">
+            <div>
+              <label>Type</label>
+              <select id="editor-add-type">
+                <option value="theme">Nouveau thème</option>
+                <option value="question">Question dans un thème existant</option>
+              </select>
+            </div>
+            <div>
+              <label>Cycle</label>
+              <select id="editor-add-cycle">
+                <option value="cycle3">Cycle 3 — 6ème</option>
+                <option value="cycle4" selected>Cycle 4</option>
+                <option value="extra">Extra (Réseaux, IA…)</option>
+              </select>
+            </div>
+          </div>
+          <div id="editor-theme-target" style="display:none">
+            <label>Thème cible</label>
+            <select id="editor-target-select"></select>
+          </div>
+          <div id="editor-new-theme-fields">
+            <label>Nom du nouveau thème</label>
+            <input type="text" id="editor-new-theme-name" placeholder="Ex : La cybersécurité">
+          </div>
+          <div>
+            <label>Question</label>
+            <textarea id="editor-new-question" placeholder="Tape ta question ici..."></textarea>
+          </div>
+          <div>
+            <label>Réponse attendue</label>
+            <textarea id="editor-new-answer" placeholder="Réponse type que tu attendrais..."></textarea>
+          </div>
+          <div>
+            <label>Niveau de difficulté</label>
+            <select id="editor-new-diff">
+              <option value="facile">🟢 Facile — 2 points</option>
+              <option value="moyen" selected>🟡 Moyen — 5 points</option>
+              <option value="difficile">🔴 Difficile — 10 points</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="App.editor.close()">Fermer</button>
+      <button class="btn-primary-sm" id="editor-save-btn" onclick="App.editor.save()" style="display:none">💾 Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ MODAL : APPS SCRIPT CODE ═══════════ -->
+<div class="overlay" id="apps-script-modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>📋 Code Google Apps Script</h2>
+      <button class="btn-icon-hdr" onclick="App.settings.hideAppsScriptCode()">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:.85rem;color:var(--dim);margin-bottom:.6rem">Copie ce code, va sur <strong>script.google.com</strong>, crée un nouveau projet, colle ce code, sauvegarde, déploie en Application Web (accès "Tout le monde"), puis copie l'URL dans les paramètres.</p>
+      <button class="btn-primary-sm" onclick="App.settings.copyAppsScriptCode()" style="margin-bottom:.7rem">📋 Copier le code</button>
+      <pre id="apps-script-code" style="background:var(--bg3);padding:1rem;border-radius:9px;font-size:.7rem;color:#a8b0c0;max-height:380px;overflow-y:auto;white-space:pre;font-family:'Courier New',monospace;line-height:1.5;border:1px solid var(--border)"></pre>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═════════════════════════════════════════════════════════════════
+// BANQUE DE QUESTIONS — 460 questions / 23 thèmes
+// ═════════════════════════════════════════════════════════════════
+const QUESTIONS_DATA = {"Les objets techniques du quotidien":[{"q":"Qu'est-ce qu'un objet technique ?","r":"C'est un objet fabriqué par l'homme pour répondre à un besoin.","d":"facile"},{"q":"Donne trois exemples d'objets techniques que tu utilises chaque jour.","r":"Un stylo, un vélo, un téléphone portable.","d":"facile"},{"q":"Quelle est la différence entre un objet naturel et un objet technique ?","r":"Un objet naturel existe dans la nature (pierre, bois), un objet technique est fabriqué par l'homme.","d":"facile"},{"q":"À quoi sert un grille-pain ?","r":"Il sert à chauffer et griller des tranches de pain grâce à l'énergie électrique.","d":"facile"},{"q":"Un arbre est-il un objet technique ? Pourquoi ?","r":"Non, car il n'a pas été fabriqué par l'homme, c'est un élément naturel.","d":"facile"},{"q":"Cite un objet technique utilisé en classe.","r":"Un vidéoprojecteur, un ordinateur, une calculatrice ou un compas.","d":"facile"},{"q":"Pourquoi les objets techniques sont-ils importants dans la vie quotidienne ?","r":"Ils facilitent la vie en répondant à des besoins comme se déplacer, communiquer ou se nourrir.","d":"facile"},{"q":"Comment classe-t-on les objets techniques ? Donne deux catégories.","r":"On peut les classer par fonction (transport, communication) ou par énergie utilisée (électrique, mécanique).","d":"moyen"},{"q":"Explique la différence entre un objet technique simple et un objet technique complexe.","r":"Un objet simple a peu de pièces et une seule fonction (marteau), un objet complexe a plusieurs pièces et fonctions (smartphone).","d":"moyen"},{"q":"Pourquoi un vélo est-il considéré comme un objet technique ?","r":"Parce qu'il a été conçu et fabriqué par l'homme pour répondre au besoin de se déplacer.","d":"moyen"},{"q":"Quels sont les principaux éléments qui composent un objet technique ?","r":"Il est composé de pièces, de mécanismes, utilise une ou plusieurs énergies et remplit une fonction d'usage.","d":"moyen"},{"q":"Donne un exemple d'objet technique qui a remplacé un objet naturel.","r":"Le briquet a remplacé les pierres à feu, la lampe a remplacé la bougie.","d":"moyen"},{"q":"Comment savoir si un objet technique fonctionne bien ?","r":"En vérifiant qu'il remplit correctement sa fonction d'usage, qu'il est fiable et facile à utiliser.","d":"moyen"},{"q":"Cite un objet technique qui utilise l'énergie solaire.","r":"Un panneau solaire, une calculatrice solaire ou une lampe de jardin solaire.","d":"moyen"},{"q":"Compare un téléphone fixe et un smartphone. Quelles évolutions techniques observes-tu ?","r":"Le smartphone est portable, tactile, connecté à Internet, fait appareil photo, GPS, tandis que le téléphone fixe ne sert qu'à appeler.","d":"difficile"},{"q":"Pourquoi dit-on qu'un objet technique est le résultat d'un processus de conception ?","r":"Parce qu'il a été pensé, dessiné, prototypé et fabriqué pour répondre précisément à un besoin identifié.","d":"difficile"},{"q":"Un robot aspirateur est-il un objet technique simple ou complexe ? Justifie.","r":"C'est un objet complexe car il intègre des capteurs, un moteur, une batterie, un programme informatique et plusieurs fonctions.","d":"difficile"},{"q":"Quels critères utilise-t-on pour choisir entre deux objets techniques remplissant la même fonction ?","r":"Le prix, la fiabilité, l'esthétique, la facilité d'utilisation, l'impact environnemental et la durée de vie.","d":"difficile"},{"q":"Pourquoi les objets techniques évoluent-ils au fil du temps ?","r":"À cause des progrès scientifiques, des nouvelles technologies, des changements de besoins et des contraintes environnementales.","d":"difficile"},{"q":"Comment un objet technique peut-il être à la fois utile et nuisible pour l'environnement ?","r":"Il peut rendre un service (transport) mais générer de la pollution, consommer des ressources ou produire des déchets.","d":"difficile"}],"Les fonctions d'usage et d'estime":[{"q":"Qu'est-ce que la fonction d'usage d'un objet technique ?","r":"C'est le service que l'objet rend à l'utilisateur, ce à quoi il sert (ex : se déplacer pour un vélo).","d":"facile"},{"q":"Qu'est-ce que la fonction d'estime d'un objet ?","r":"C'est ce qui fait qu'on aime ou qu'on préfère un objet : sa couleur, sa forme, sa marque.","d":"facile"},{"q":"Quelle est la fonction d'usage d'une montre ?","r":"Donner l'heure et mesurer le temps.","d":"facile"},{"q":"Donne un exemple de fonction d'estime pour un téléphone.","r":"Sa couleur, son design, la marque (Apple, Samsung), la taille de l'écran.","d":"facile"},{"q":"Deux stylos ont la même fonction d'usage. Qu'est-ce qui peut les différencier ?","r":"Leur fonction d'estime : la couleur, la forme, le prix, la marque, le confort de prise en main.","d":"facile"},{"q":"La fonction d'usage dépend-elle des goûts de l'utilisateur ?","r":"Non, la fonction d'usage est la même pour tous. C'est la fonction d'estime qui dépend des goûts.","d":"facile"},{"q":"Cite la fonction d'usage d'une lampe de bureau.","r":"Éclairer une surface de travail.","d":"facile"},{"q":"Explique pourquoi deux voitures peuvent avoir la même fonction d'usage mais pas la même fonction d'estime.","r":"Toutes deux servent à transporter des personnes, mais l'une peut être plus belle, plus luxueuse ou d'une marque préférée.","d":"moyen"},{"q":"Comment un fabricant joue-t-il sur la fonction d'estime pour vendre ses produits ?","r":"En travaillant le design, les couleurs, les matériaux, la publicité et l'image de marque.","d":"moyen"},{"q":"Un objet peut-il avoir plusieurs fonctions d'usage ? Donne un exemple.","r":"Oui, un smartphone sert à téléphoner, photographier, naviguer sur Internet, calculer, etc.","d":"moyen"},{"q":"Quelle est la différence entre une fonction d'usage et une fonction technique ?","r":"La fonction d'usage est le service global rendu, la fonction technique est la solution utilisée pour y parvenir.","d":"moyen"},{"q":"Pourquoi la fonction d'estime est-elle importante pour les entreprises ?","r":"Elle influence le choix des consommateurs et permet de se différencier de la concurrence.","d":"moyen"},{"q":"Comment déterminer la fonction d'usage d'un objet qu'on ne connaît pas ?","r":"En observant sa forme, ses composants, en le testant et en se demandant quel besoin il satisfait.","d":"moyen"},{"q":"Cite deux critères de la fonction d'estime qui peuvent changer selon les cultures.","r":"Les couleurs préférées et les formes considérées comme belles varient selon les pays et les époques.","d":"moyen"},{"q":"Un objet peut-il perdre sa fonction d'estime tout en gardant sa fonction d'usage ? Explique.","r":"Oui, un vieux téléphone fonctionne toujours mais n'est plus à la mode, sa fonction d'estime a diminué.","d":"difficile"},{"q":"Comment la fonction d'estime influence-t-elle le prix d'un objet ?","r":"Un objet avec un design recherché, une marque prestigieuse ou des matériaux nobles coûte plus cher même si la fonction d'usage est identique.","d":"difficile"},{"q":"Analyse les fonctions d'usage et d'estime d'une paire de baskets de sport.","r":"Usage : protéger le pied et permettre de courir. Estime : marque, couleurs, design, tendance, matériaux, confort.","d":"difficile"},{"q":"Pourquoi deux objets ayant la même fonction d'usage peuvent avoir des prix très différents ?","r":"À cause des matériaux, de la marque, du design, de la qualité de fabrication et de la fonction d'estime.","d":"difficile"},{"q":"Comment un designer prend-il en compte à la fois la fonction d'usage et la fonction d'estime ?","r":"Il conçoit un objet qui remplit bien sa fonction tout en étant esthétique, ergonomique et attractif pour les consommateurs.","d":"difficile"},{"q":"Donne un exemple d'objet dont la fonction d'estime a complètement changé au fil du temps.","r":"Le vinyle : autrefois courant, il est devenu un objet de collection recherché pour son esthétique et son son vintage.","d":"difficile"}],"Les matériaux et leurs propriétés":[{"q":"Cite trois familles de matériaux.","r":"Les métaux, les plastiques (polymères) et les céramiques (ou le bois, les composites).","d":"facile"},{"q":"De quel matériau est faite une bouteille d'eau ?","r":"En plastique (PET : polyéthylène téréphtalate).","d":"facile"},{"q":"Qu'est-ce qu'un matériau conducteur ?","r":"C'est un matériau qui laisse passer le courant électrique, comme le cuivre ou l'aluminium.","d":"facile"},{"q":"Pourquoi utilise-t-on du verre pour les fenêtres ?","r":"Parce qu'il est transparent, rigide et résistant aux intempéries.","d":"facile"},{"q":"Le bois est-il un matériau naturel ou synthétique ?","r":"C'est un matériau naturel, il provient des arbres.","d":"facile"},{"q":"Cite un matériau qui ne rouille pas.","r":"L'aluminium, l'acier inoxydable ou le plastique.","d":"facile"},{"q":"Pourquoi le caoutchouc est-il utilisé pour les pneus ?","r":"Parce qu'il est souple, élastique et adhérent sur la route.","d":"facile"},{"q":"Quelle propriété du métal permet de fabriquer des casseroles ?","r":"Sa conductivité thermique : il conduit bien la chaleur pour cuire les aliments.","d":"moyen"},{"q":"Quelle est la différence entre un matériau recyclable et un matériau biodégradable ?","r":"Un matériau recyclable peut être transformé pour fabriquer un nouvel objet, un matériau biodégradable se décompose naturellement.","d":"moyen"},{"q":"Pourquoi utilise-t-on des matériaux composites dans l'aéronautique ?","r":"Parce qu'ils sont légers et très résistants, ce qui réduit le poids des avions et leur consommation de carburant.","d":"moyen"},{"q":"Cite deux propriétés mécaniques des matériaux.","r":"La dureté (résistance aux rayures) et la résistance à la traction (ne casse pas quand on tire dessus).","d":"moyen"},{"q":"Pourquoi les fils électriques sont-ils en cuivre recouvert de plastique ?","r":"Le cuivre est conducteur d'électricité, le plastique est isolant et protège contre les courts-circuits.","d":"moyen"},{"q":"Comment teste-t-on la dureté d'un matériau ?","r":"En essayant de le rayer avec un autre matériau plus dur, ou avec un test de dureté normalisé.","d":"moyen"},{"q":"Pourquoi remplace-t-on parfois le métal par du plastique dans les objets ?","r":"Le plastique est plus léger, moins cher, ne rouille pas et peut être moulé facilement.","d":"moyen"},{"q":"Compare les avantages et inconvénients du bois et du plastique pour fabriquer un meuble.","r":"Le bois est naturel, esthétique et solide mais coûte cher. Le plastique est léger et bon marché mais moins noble et polluant.","d":"difficile"},{"q":"Pourquoi le choix d'un matériau dépend-il de la fonction de l'objet ?","r":"Chaque fonction nécessite des propriétés spécifiques : résistance, légèreté, conductivité, transparence, etc.","d":"difficile"},{"q":"Qu'est-ce qu'un matériau composite ? Donne un exemple concret.","r":"C'est un matériau fabriqué en combinant deux matériaux pour obtenir de meilleures propriétés. Ex : fibre de carbone (fibres + résine).","d":"difficile"},{"q":"Comment le recyclage des matériaux contribue-t-il au développement durable ?","r":"Il réduit la consommation de matières premières, l'énergie de fabrication et la quantité de déchets.","d":"difficile"},{"q":"Pourquoi les smartphones utilisent-ils autant de matériaux différents ?","r":"Chaque composant exige des propriétés spécifiques : verre pour l'écran, lithium pour la batterie, cuivre pour les circuits, aluminium pour le châssis.","d":"difficile"},{"q":"Quels sont les critères à prendre en compte pour choisir un matériau de manière responsable ?","r":"Le coût, les propriétés techniques, la disponibilité, la recyclabilité, l'impact environnemental et la durée de vie.","d":"difficile"}],"Les chaînes d'énergie":[{"q":"Qu'est-ce qu'une chaîne d'énergie ?","r":"C'est la description du parcours de l'énergie dans un objet technique, de la source jusqu'à l'action finale.","d":"facile"},{"q":"Quelles sont les quatre étapes d'une chaîne d'énergie ?","r":"Alimenter, distribuer, convertir, transmettre.","d":"facile"},{"q":"Quelle est la source d'énergie d'un vélo ?","r":"L'énergie musculaire du cycliste.","d":"facile"},{"q":"Quel composant convertit l'énergie électrique en mouvement ?","r":"Un moteur électrique.","d":"facile"},{"q":"Dans une lampe, quelle énergie est convertie en quelle autre ?","r":"L'énergie électrique est convertie en énergie lumineuse (et thermique).","d":"facile"},{"q":"Qu'est-ce qu'un actionneur ?","r":"C'est un composant qui convertit l'énergie en action : un moteur, une lampe, un haut-parleur.","d":"facile"},{"q":"Quelle est la source d'énergie d'un téléphone portable ?","r":"La batterie (énergie chimique stockée).","d":"facile"},{"q":"Décris la chaîne d'énergie d'une trottinette électrique.","r":"Batterie (alimenter) → contrôleur (distribuer) → moteur (convertir en mouvement) → roue (transmettre).","d":"moyen"},{"q":"Quelle est la différence entre convertir et transmettre l'énergie ?","r":"Convertir, c'est changer la forme d'énergie (électrique → mécanique). Transmettre, c'est amener cette énergie à l'endroit où elle est utilisée.","d":"moyen"},{"q":"Pourquoi y a-t-il toujours des pertes d'énergie dans une chaîne d'énergie ?","r":"Parce qu'une partie de l'énergie se transforme en chaleur (pertes thermiques) à chaque étape.","d":"moyen"},{"q":"Cite un objet technique dont la chaîne d'énergie commence par l'énergie solaire.","r":"Un panneau photovoltaïque qui alimente une lampe LED ou une calculatrice solaire.","d":"moyen"},{"q":"Dans un sèche-cheveux, quelles conversions d'énergie se produisent ?","r":"Énergie électrique → énergie thermique (résistance chauffante) + énergie mécanique (ventilateur).","d":"moyen"},{"q":"Quel est le rôle d'un réducteur dans une chaîne d'énergie ?","r":"Il réduit la vitesse de rotation du moteur tout en augmentant la force transmise.","d":"moyen"},{"q":"Comment améliorer le rendement d'une chaîne d'énergie ?","r":"En réduisant les frottements, en utilisant des composants plus efficaces et en limitant les pertes thermiques.","d":"moyen"},{"q":"Dessine et explique la chaîne d'énergie d'un portail automatique.","r":"Secteur 230V (alimenter) → carte électronique (distribuer) → moteur (convertir) → engrenages + bras (transmettre le mouvement au portail).","d":"difficile"},{"q":"Compare la chaîne d'énergie d'un vélo classique et d'un vélo à assistance électrique.","r":"Le vélo classique n'utilise que l'énergie musculaire. Le VAE ajoute une batterie, un contrôleur et un moteur qui assiste le pédalage.","d":"difficile"},{"q":"Pourquoi un moteur thermique a-t-il un rendement plus faible qu'un moteur électrique ?","r":"Parce qu'il perd beaucoup d'énergie sous forme de chaleur (environ 70% de pertes) alors qu'un moteur électrique a moins de 10% de pertes.","d":"difficile"},{"q":"Comment la chaîne d'énergie d'une voiture hybride combine-t-elle deux sources ?","r":"Elle utilise un moteur thermique (essence) et un moteur électrique (batterie) qui peuvent fonctionner alternativement ou ensemble selon les conditions.","d":"difficile"},{"q":"Quel est l'impact environnemental d'une chaîne d'énergie utilisant des énergies fossiles ?","r":"Elle produit du CO2, des particules polluantes et contribue au réchauffement climatique et à l'épuisement des ressources.","d":"difficile"},{"q":"Propose une chaîne d'énergie pour une maison autonome en énergie.","r":"Panneaux solaires (alimenter) → onduleur (convertir en courant alternatif) → tableau électrique (distribuer) → appareils (utiliser). Batterie pour stocker.","d":"difficile"}],"Les chaînes d'information":[{"q":"Qu'est-ce qu'une chaîne d'information ?","r":"C'est le parcours de l'information dans un système : acquérir, traiter, communiquer.","d":"facile"},{"q":"Quelles sont les trois étapes de la chaîne d'information ?","r":"Acquérir (capter), traiter (analyser), communiquer (transmettre le résultat).","d":"facile"},{"q":"Qu'est-ce qu'un capteur ? Donne un exemple.","r":"C'est un composant qui détecte une grandeur physique. Exemple : un capteur de température.","d":"facile"},{"q":"Quel composant traite l'information dans un système automatisé ?","r":"Le microcontrôleur, le processeur ou la carte programmable (Arduino, micro:bit).","d":"facile"},{"q":"Cite un exemple de système qui utilise une chaîne d'information.","r":"Un système d'alarme : le capteur détecte un mouvement, le processeur l'analyse, la sirène communique l'alerte.","d":"facile"},{"q":"Qu'est-ce qu'un signal ?","r":"C'est une information transmise sous forme électrique, lumineuse ou sonore entre les éléments d'un système.","d":"facile"},{"q":"À quoi sert un afficheur dans une chaîne d'information ?","r":"Il communique le résultat du traitement à l'utilisateur (écran, LED, buzzer).","d":"facile"},{"q":"Décris la chaîne d'information d'un thermostat de chauffage.","r":"Capteur de température (acquérir) → processeur compare à la consigne (traiter) → ordre au radiateur on/off (communiquer).","d":"moyen"},{"q":"Quelle est la différence entre un capteur et un actionneur ?","r":"Le capteur mesure une grandeur physique (entrée), l'actionneur produit une action (sortie : moteur, lampe, sirène).","d":"moyen"},{"q":"Comment un feu tricolore utilise-t-il une chaîne d'information ?","r":"Un compteur de temps (acquérir) → automate programmé (traiter selon le programme) → feux rouge/orange/vert (communiquer).","d":"moyen"},{"q":"Cite trois types de capteurs différents et ce qu'ils mesurent.","r":"Capteur de lumière (luminosité), capteur ultrason (distance), capteur d'humidité (taux d'humidité dans l'air).","d":"moyen"},{"q":"Pourquoi la chaîne d'information est-elle liée à la chaîne d'énergie ?","r":"La chaîne d'information commande la chaîne d'énergie : elle décide quand et comment l'énergie est distribuée aux actionneurs.","d":"moyen"},{"q":"Comment un robot suiveur de ligne utilise-t-il sa chaîne d'information ?","r":"Des capteurs infrarouges détectent la ligne (acquérir), le microcontrôleur calcule la direction (traiter), il commande les moteurs (communiquer).","d":"moyen"},{"q":"Quelle est la différence entre un signal analogique et un signal numérique ?","r":"Un signal analogique varie de façon continue (température), un signal numérique ne prend que des valeurs 0 ou 1 (binaire).","d":"moyen"},{"q":"Conçois la chaîne d'information d'un système d'arrosage automatique.","r":"Capteur d'humidité du sol (acquérir) → microcontrôleur compare au seuil (traiter) → électrovanne ouvre/ferme l'eau (communiquer à la chaîne d'énergie).","d":"difficile"},{"q":"Comment la chaîne d'information d'un drone lui permet-elle de voler de façon stable ?","r":"Gyroscope + accéléromètre + GPS (acquérir) → processeur ajuste en temps réel (traiter) → commande les moteurs (communiquer).","d":"difficile"},{"q":"Pourquoi un système automatisé a-t-il besoin à la fois d'une chaîne d'information et d'une chaîne d'énergie ?","r":"La chaîne d'information prend les décisions (le cerveau), la chaîne d'énergie exécute les actions (les muscles). L'une sans l'autre ne fonctionne pas.","d":"difficile"},{"q":"Compare la chaîne d'information d'un passage à niveau automatique et d'un passage à niveau manuel.","r":"L'automatique utilise des capteurs de présence du train + automate. Le manuel dépend d'un humain qui voit le train et baisse la barrière.","d":"difficile"},{"q":"Comment l'intelligence artificielle modifie-t-elle la partie 'traiter' de la chaîne d'information ?","r":"L'IA permet au système d'apprendre et de s'adapter aux situations nouvelles au lieu de suivre un programme fixe.","d":"difficile"},{"q":"Quelle est l'importance de la cybersécurité dans les chaînes d'information connectées ?","r":"Si la chaîne d'information est piratée, un intrus peut prendre le contrôle du système : ouvrir une porte, désactiver une alarme, etc.","d":"difficile"}],"Les sources d'énergie":[{"q":"Cite deux sources d'énergie renouvelables.","r":"Le soleil (énergie solaire) et le vent (énergie éolienne).","d":"facile"},{"q":"Cite deux sources d'énergie non renouvelables.","r":"Le pétrole et le gaz naturel (ou le charbon, l'uranium).","d":"facile"},{"q":"Qu'est-ce qu'une énergie renouvelable ?","r":"C'est une énergie dont la source se renouvelle naturellement et ne s'épuise pas à l'échelle humaine.","d":"facile"},{"q":"Quelle source d'énergie utilise-t-on principalement en France pour produire de l'électricité ?","r":"L'énergie nucléaire (uranium), qui produit environ 70% de l'électricité française.","d":"facile"},{"q":"Qu'est-ce que l'énergie hydraulique ?","r":"C'est l'énergie produite par le mouvement de l'eau (barrages, courants, marées).","d":"facile"},{"q":"Pourquoi le pétrole est-il une énergie non renouvelable ?","r":"Parce qu'il a mis des millions d'années à se former et qu'on le consomme beaucoup plus vite qu'il ne se reconstitue.","d":"facile"},{"q":"Quelle énergie utilise une éolienne ?","r":"L'énergie cinétique du vent, qu'elle convertit en énergie électrique.","d":"facile"},{"q":"Quelle est la différence entre énergie primaire et énergie finale ?","r":"L'énergie primaire est la source brute (charbon, soleil), l'énergie finale est celle utilisée par le consommateur (électricité, chaleur).","d":"moyen"},{"q":"Pourquoi dit-on que l'énergie nucléaire est décarbonée mais pas renouvelable ?","r":"Elle n'émet presque pas de CO2 en fonctionnement, mais l'uranium est une ressource limitée qui s'épuisera.","d":"moyen"},{"q":"Comment un panneau solaire photovoltaïque transforme-t-il la lumière en électricité ?","r":"Les cellules photovoltaïques en silicium convertissent directement les photons de la lumière en courant électrique.","d":"moyen"},{"q":"Quels sont les avantages et inconvénients de l'énergie éolienne ?","r":"Avantages : renouvelable, pas de CO2. Inconvénients : intermittente (pas de vent = pas d'énergie), bruit, impact visuel.","d":"moyen"},{"q":"Pourquoi stocke-t-on l'énergie dans des batteries ?","r":"Parce que la production d'énergie renouvelable est intermittente et ne correspond pas toujours au moment de consommation.","d":"moyen"},{"q":"Qu'est-ce que la biomasse ?","r":"C'est l'énergie issue de la matière organique : bois, déchets végétaux, biogaz. C'est une énergie renouvelable.","d":"moyen"},{"q":"Comment fonctionne une centrale hydroélectrique ?","r":"L'eau retenue par un barrage est libérée, son mouvement fait tourner une turbine reliée à un alternateur qui produit de l'électricité.","d":"moyen"},{"q":"Pourquoi le mix énergétique est-il important pour un pays ?","r":"Il permet de ne pas dépendre d'une seule source, de réduire les risques de pénurie et de limiter les impacts environnementaux.","d":"difficile"},{"q":"Compare l'impact environnemental d'une centrale à charbon et d'une ferme solaire.","r":"La centrale à charbon émet beaucoup de CO2 et de particules. La ferme solaire n'émet rien en fonctionnement mais sa fabrication nécessite des ressources.","d":"difficile"},{"q":"Pourquoi la transition énergétique est-elle un défi technique et social ?","r":"Technique : intermittence, stockage, réseau. Social : coût, emplois à reconvertir, changement des habitudes de consommation.","d":"difficile"},{"q":"Comment l'hydrogène peut-il devenir une source d'énergie du futur ?","r":"Produit par électrolyse de l'eau avec de l'électricité renouvelable, il peut être stocké et utilisé dans des piles à combustible sans émettre de CO2.","d":"difficile"},{"q":"Quel est le rôle du réseau électrique dans la distribution de l'énergie ?","r":"Il transporte l'électricité des centrales de production vers les consommateurs, en adaptant la tension avec des transformateurs.","d":"difficile"},{"q":"Argumente pour ou contre l'installation d'éoliennes dans ta commune.","r":"Pour : énergie propre, emplois locaux, autonomie. Contre : bruit, impact paysager, intermittence, coût d'installation.","d":"difficile"}],"La fabrication d'un objet simple":[{"q":"Cite trois opérations de fabrication.","r":"Découper, percer, plier (ou assembler, coller, visser).","d":"facile"},{"q":"Qu'est-ce qu'un gabarit ?","r":"C'est un modèle qui sert de guide pour reproduire une forme ou une découpe identique.","d":"facile"},{"q":"Quel outil utilise-t-on pour percer un trou dans du métal ?","r":"Une perceuse (à colonne ou portative) avec un foret adapté au métal.","d":"facile"},{"q":"Pourquoi faut-il porter des lunettes de protection en atelier ?","r":"Pour protéger les yeux des projections de copeaux, de poussières ou d'éclats lors des opérations de fabrication.","d":"facile"},{"q":"Qu'est-ce qu'un assemblage ?","r":"C'est la réunion de plusieurs pièces pour former un objet. On peut visser, coller, clipser, souder.","d":"facile"},{"q":"Quelle est la différence entre un assemblage démontable et permanent ?","r":"Démontable : vis, boulon, clip (on peut séparer les pièces). Permanent : soudure, collage (on ne peut pas).","d":"facile"},{"q":"À quoi sert une imprimante 3D en fabrication ?","r":"Elle permet de fabriquer des pièces en déposant du plastique fondu couche par couche à partir d'un fichier numérique.","d":"facile"},{"q":"Quelles sont les étapes de fabrication d'un objet, dans l'ordre ?","r":"Conception (dessin) → choix des matériaux → traçage → usinage (découpe, perçage) → assemblage → contrôle qualité.","d":"moyen"},{"q":"Pourquoi réalise-t-on un prototype avant la fabrication en série ?","r":"Pour tester si l'objet fonctionne correctement, repérer les erreurs et les corriger avant de produire en grande quantité.","d":"moyen"},{"q":"Quelle est la différence entre fabrication artisanale et fabrication industrielle ?","r":"Artisanale : à la main, petite quantité, pièces uniques. Industrielle : machines, grande quantité, pièces identiques.","d":"moyen"},{"q":"Comment une découpeuse laser fonctionne-t-elle ?","r":"Un faisceau laser concentré brûle ou vaporise le matériau en suivant un tracé numérique très précis.","d":"moyen"},{"q":"Pourquoi le traçage est-il une étape importante ?","r":"Il permet de repérer précisément les endroits où découper, percer ou plier, pour que les pièces s'assemblent correctement.","d":"moyen"},{"q":"Cite deux types de machines-outils utilisées au collège.","r":"La perceuse à colonne et la thermoplieuse (ou l'imprimante 3D, la découpeuse laser).","d":"moyen"},{"q":"Qu'est-ce que la cotation sur un dessin technique ?","r":"Ce sont les dimensions (longueur, largeur, diamètre) inscrites sur le dessin pour que les pièces soient fabriquées aux bonnes mesures.","d":"moyen"},{"q":"Compare la fabrication par enlèvement de matière et par ajout de matière.","r":"Enlèvement : on retire de la matière (usinage, perçage, fraisage). Ajout : on ajoute de la matière (impression 3D, soudage).","d":"difficile"},{"q":"Pourquoi le contrôle qualité est-il indispensable en fin de fabrication ?","r":"Pour vérifier que les dimensions, l'aspect et le fonctionnement de l'objet sont conformes au cahier des charges.","d":"difficile"},{"q":"Comment l'impression 3D a-t-elle révolutionné le prototypage ?","r":"Elle permet de créer un prototype en quelques heures au lieu de plusieurs semaines, à moindre coût, et de le modifier facilement.","d":"difficile"},{"q":"Quelles précautions de sécurité faut-il respecter lors de l'utilisation d'une perceuse à colonne ?","r":"Attacher ses cheveux, enlever les bijoux, fixer la pièce dans l'étau, porter des lunettes, ne jamais tenir la pièce à la main.","d":"difficile"},{"q":"Pourquoi la conception assistée par ordinateur (CAO) facilite-t-elle la fabrication ?","r":"Elle permet de dessiner en 3D, de simuler le fonctionnement, de détecter les erreurs et d'envoyer directement les fichiers aux machines.","d":"difficile"},{"q":"Comment organise-t-on un planning de fabrication pour un projet de groupe ?","r":"On liste les tâches, on estime leur durée, on les répartit entre les membres et on planifie l'ordre avec un diagramme de Gantt.","d":"difficile"}],"L'évolution des objets techniques":[{"q":"Cite un objet technique qui a beaucoup évolué depuis 100 ans.","r":"Le téléphone : du téléphone fixe à cadran au smartphone tactile connecté.","d":"facile"},{"q":"Qu'est-ce qu'une innovation ?","r":"C'est une amélioration ou une nouveauté apportée à un objet, un procédé ou un service.","d":"facile"},{"q":"Comment se déplaçait-on avant l'invention de l'automobile ?","r":"À pied, à cheval, en charrette ou en bateau.","d":"facile"},{"q":"Cite une invention qui a révolutionné la communication.","r":"Internet (ou le téléphone, la radio, l'imprimerie).","d":"facile"},{"q":"Pourquoi les objets techniques changent-ils au fil du temps ?","r":"À cause des progrès scientifiques, des nouvelles technologies et de l'évolution des besoins des gens.","d":"facile"},{"q":"Quel objet a remplacé la bougie pour s'éclairer ?","r":"La lampe à incandescence, puis la lampe LED.","d":"facile"},{"q":"Qu'est-ce qu'une frise chronologique d'un objet technique ?","r":"C'est un schéma qui montre les différentes versions d'un objet dans l'ordre du temps, avec les dates des innovations.","d":"facile"},{"q":"Quels sont les principaux critères qui font évoluer un objet technique ?","r":"Le progrès technologique, les nouveaux matériaux, les normes de sécurité, les préoccupations environnementales et les goûts des utilisateurs.","d":"moyen"},{"q":"Comment l'énergie utilisée par les voitures a-t-elle évolué ?","r":"Vapeur → essence/diesel → hybride (essence+électrique) → 100% électrique → hydrogène (futur).","d":"moyen"},{"q":"Pourquoi le passage du disque vinyle au streaming musical est-il une évolution majeure ?","r":"On est passé d'un support physique (objet matériel) à un service dématérialisé accessible partout via Internet.","d":"moyen"},{"q":"Comment les matériaux ont-ils influencé l'évolution des vélos ?","r":"Acier lourd → aluminium plus léger → fibres de carbone ultra-légères et résistantes → composites.","d":"moyen"},{"q":"Qu'est-ce qu'une rupture technologique ? Donne un exemple.","r":"C'est un changement radical de technologie. Exemple : le passage du film argentique à la photographie numérique.","d":"moyen"},{"q":"Comment l'ergonomie a-t-elle évolué dans la conception des claviers d'ordinateur ?","r":"Des claviers mécaniques lourds aux claviers ergonomiques incurvés, puis aux claviers plats et aux écrans tactiles.","d":"moyen"},{"q":"Pourquoi les téléphones portables sont-ils devenus de plus en plus fins ?","r":"Grâce à la miniaturisation des composants électroniques, des batteries plus plates et des écrans plus fins.","d":"moyen"},{"q":"Analyse l'évolution du stockage de données : du papier au cloud.","r":"Papier → bande magnétique → disquette → CD → clé USB → disque dur → SSD → cloud. Capacité croissante, taille décroissante.","d":"difficile"},{"q":"Pourquoi certaines innovations échouent-elles malgré leur avance technologique ?","r":"Parce qu'elles ne répondent pas à un vrai besoin, sont trop chères, arrivent trop tôt ou ne sont pas acceptées par les utilisateurs.","d":"difficile"},{"q":"Comment l'évolution des objets techniques reflète-t-elle les préoccupations environnementales ?","r":"Les objets deviennent plus économes en énergie, utilisent des matériaux recyclés, sont conçus pour être réparables et recyclables.","d":"difficile"},{"q":"Compare l'évolution de l'éclairage : bougie, ampoule à incandescence, LED. Quels progrès ?","r":"Rendement lumineux multiplié par 100, durée de vie allongée, consommation réduite, risque d'incendie éliminé.","d":"difficile"},{"q":"En quoi l'intelligence artificielle représente-t-elle une nouvelle étape dans l'évolution des objets techniques ?","r":"Elle permet aux objets d'apprendre, de s'adapter et de prendre des décisions autonomes, au-delà de la simple programmation.","d":"difficile"},{"q":"Propose un objet technique du futur et explique en quoi il serait une évolution par rapport à l'existant.","r":"Réponse libre mais doit justifier : quel besoin, quelle technologie nouvelle, quel avantage par rapport à l'existant.","d":"difficile"}],"Les besoins et les solutions techniques":[{"q":"Qu'est-ce qu'un besoin en technologie ?","r":"C'est une nécessité ou un désir exprimé par un utilisateur, auquel un objet technique apporte une solution.","d":"facile"},{"q":"Donne un exemple de besoin et l'objet technique qui y répond.","r":"Besoin : se déplacer rapidement. Solution : la voiture, le vélo, le bus.","d":"facile"},{"q":"Qu'est-ce qu'un cahier des charges ?","r":"C'est un document qui liste toutes les contraintes et les fonctions que l'objet technique doit respecter.","d":"facile"},{"q":"Qu'est-ce qu'une contrainte technique ?","r":"C'est une limite ou une exigence à respecter lors de la conception : taille, poids, matériaux, prix, sécurité.","d":"facile"},{"q":"Pourquoi analyse-t-on le besoin avant de concevoir un objet ?","r":"Pour être sûr que l'objet répondra vraiment au problème de l'utilisateur et évitera de gaspiller du temps et de l'argent.","d":"facile"},{"q":"Qu'est-ce qu'une fonction de service ?","r":"C'est une action que l'objet doit réaliser pour satisfaire le besoin de l'utilisateur.","d":"facile"},{"q":"Cite trois types de contraintes dans un cahier des charges.","r":"Contraintes de coût (budget), de sécurité (normes) et d'environnement (recyclabilité).","d":"facile"},{"q":"Comment utilise-t-on le diagramme bête à cornes ?","r":"Il répond à 3 questions : à qui l'objet rend-il service ? Sur quoi agit-il ? Dans quel but ?","d":"moyen"},{"q":"Quelle est la différence entre une fonction de service et une fonction technique ?","r":"La fonction de service est le besoin vu par l'utilisateur, la fonction technique est la solution choisie par le concepteur pour y répondre.","d":"moyen"},{"q":"Pourquoi un même besoin peut-il avoir plusieurs solutions techniques ?","r":"Parce que différentes technologies, matériaux ou mécanismes peuvent atteindre le même résultat. Ex : éclairage par LED, halogène ou néon.","d":"moyen"},{"q":"Comment hiérarchise-t-on les fonctions dans un cahier des charges ?","r":"En distinguant les fonctions principales (indispensables) des fonctions secondaires (souhaitables mais pas obligatoires).","d":"moyen"},{"q":"Qu'est-ce qu'un diagramme pieuvre et à quoi sert-il ?","r":"C'est un schéma qui montre les relations entre l'objet technique et les éléments de son environnement (utilisateur, énergie, normes, etc.).","d":"moyen"},{"q":"Comment vérifie-t-on qu'un objet technique répond au cahier des charges ?","r":"En testant chaque fonction et chaque contrainte listée, et en comparant les résultats avec les critères définis.","d":"moyen"},{"q":"Pourquoi les contraintes environnementales sont-elles de plus en plus présentes dans les cahiers des charges ?","r":"À cause de la prise de conscience écologique, des réglementations et de la demande des consommateurs pour des produits durables.","d":"moyen"},{"q":"Conçois le cahier des charges simplifié d'un sac à dos scolaire.","r":"Fonctions : transporter des livres, être confortable, résister à l'usure. Contraintes : poids < 1 kg, prix < 50€, matériau imperméable, bretelles réglables.","d":"difficile"},{"q":"Comment le besoin de mobilité a-t-il conduit à l'invention de la trottinette électrique ?","r":"Le besoin de se déplacer en ville de manière rapide, pratique et sans effort a conduit à électrifier la trottinette, un objet simple et compact.","d":"difficile"},{"q":"Pourquoi est-il important d'impliquer les futurs utilisateurs dans l'expression du besoin ?","r":"Pour comprendre leurs vrais problèmes, éviter de concevoir un objet inadapté, et s'assurer qu'il sera réellement utilisé.","d":"difficile"},{"q":"Comment la méthode de conception FAST permet-elle de passer du besoin à la solution ?","r":"Elle décompose la fonction de service en sous-fonctions techniques, jusqu'à identifier les solutions concrètes (composants, mécanismes).","d":"difficile"},{"q":"Analyse un échec commercial d'un objet technique et explique pourquoi il n'a pas répondu au besoin.","r":"Le Google Glass : technologie avancée mais besoin mal identifié, prix trop élevé, problèmes de vie privée, design inadapté.","d":"difficile"},{"q":"Comment le développement durable modifie-t-il la façon dont on exprime les besoins techniques ?","r":"On ajoute des contraintes de recyclabilité, de consommation d'énergie, de durée de vie et d'impact carbone dès l'expression du besoin.","d":"difficile"}],"Les objets techniques et l'environnement":[{"q":"Qu'est-ce que l'empreinte écologique d'un objet technique ?","r":"C'est l'impact total de l'objet sur l'environnement, de sa fabrication à sa fin de vie.","d":"facile"},{"q":"Pourquoi faut-il recycler les objets techniques en fin de vie ?","r":"Pour récupérer les matériaux, réduire les déchets et limiter la pollution.","d":"facile"},{"q":"Cite un exemple d'objet technique polluant.","r":"Une voiture diesel (émissions de CO2 et de particules fines).","d":"facile"},{"q":"Qu'est-ce que le recyclage ?","r":"C'est le processus qui transforme un déchet en matière première pour fabriquer un nouvel objet.","d":"facile"},{"q":"Pourquoi les appareils électroniques sont-ils dangereux pour l'environnement ?","r":"Ils contiennent des métaux lourds et des substances toxiques qui polluent les sols et l'eau s'ils ne sont pas recyclés.","d":"facile"},{"q":"Que signifie le sigle DEEE ?","r":"Déchets d'Équipements Électriques et Électroniques. Ce sont les appareils à recycler en déchetterie.","d":"facile"},{"q":"Cite un geste simple pour réduire l'impact environnemental de tes objets techniques.","r":"Réparer au lieu de jeter, recycler, acheter d'occasion, éteindre les appareils en veille.","d":"facile"},{"q":"Qu'est-ce que l'obsolescence programmée ?","r":"C'est quand un fabricant conçoit un objet pour qu'il tombe en panne ou devienne obsolète après une durée déterminée, pour forcer l'achat d'un neuf.","d":"moyen"},{"q":"Comment le cycle de vie d'un objet technique impacte-t-il l'environnement ?","r":"Chaque étape (extraction des matériaux, fabrication, transport, utilisation, fin de vie) consomme de l'énergie et produit des déchets.","d":"moyen"},{"q":"Qu'est-ce que l'éco-conception ?","r":"C'est concevoir un objet en réduisant son impact environnemental à chaque étape de son cycle de vie.","d":"moyen"},{"q":"Pourquoi l'extraction des terres rares pose-t-elle un problème environnemental ?","r":"Elle nécessite beaucoup d'eau et d'énergie, produit des déchets toxiques et détruit des écosystèmes, souvent dans des pays pauvres.","d":"moyen"},{"q":"Comment une analyse du cycle de vie (ACV) aide-t-elle les concepteurs ?","r":"Elle quantifie l'impact environnemental à chaque étape, ce qui permet d'identifier les points à améliorer.","d":"moyen"},{"q":"Cite deux exemples d'éco-conception dans des objets du quotidien.","r":"Les bouteilles en plastique recyclé et les téléphones modulaires réparables (ex : Fairphone).","d":"moyen"},{"q":"Pourquoi la réparation est-elle préférable au remplacement d'un objet ?","r":"Elle prolonge la durée de vie, évite la fabrication d'un nouvel objet et réduit les déchets.","d":"moyen"},{"q":"Compare l'impact environnemental d'un livre papier et d'une liseuse électronique.","r":"Le livre utilise du papier (arbres, eau, encre). La liseuse utilise des métaux, du plastique et de l'énergie mais peut stocker des milliers de livres.","d":"difficile"},{"q":"Pourquoi l'économie circulaire est-elle une alternative au modèle linéaire ?","r":"Au lieu de extraire→fabriquer→jeter, l'économie circulaire réutilise, répare, recycle et réduit les déchets à chaque étape.","d":"difficile"},{"q":"Comment la loi française sur l'indice de réparabilité influence-t-elle les fabricants ?","r":"Elle les oblige à afficher un score de réparabilité (sur 10), ce qui pousse à concevoir des produits plus faciles à réparer.","d":"difficile"},{"q":"Quel est l'impact environnemental caché du numérique ?","r":"Les data centers consomment énormément d'électricité, les emails et le streaming produisent du CO2, les appareils nécessitent des métaux rares.","d":"difficile"},{"q":"Comment un collégien peut-il agir pour réduire l'empreinte numérique ?","r":"Supprimer les emails inutiles, réduire le streaming vidéo, garder son téléphone plus longtemps, utiliser le Wi-Fi plutôt que la 4G.","d":"difficile"},{"q":"Propose un objet éco-conçu et justifie chaque choix de conception.","r":"Réponse libre mais doit justifier : matériaux recyclés, énergie renouvelable, réparabilité, durée de vie longue, emballage minimal.","d":"difficile"}],"Le design, l'innovation et la créativité":[{"q":"Qu'est-ce que le design d'un objet technique ?","r":"C'est la démarche qui combine esthétique, ergonomie et fonctionnalité pour concevoir un objet attractif et utile.","d":"facile"},{"q":"Quelle est la différence entre invention et innovation ?","r":"L'invention crée quelque chose de nouveau, l'innovation améliore ou applique une invention existante à un nouveau contexte.","d":"facile"},{"q":"Qu'est-ce qu'un brainstorming ?","r":"C'est une technique de créativité en groupe où chacun propose des idées sans les juger, pour trouver des solutions.","d":"facile"},{"q":"Pourquoi le design est-il important pour le succès d'un produit ?","r":"Parce qu'un bel objet, ergonomique et facile à utiliser, attire les consommateurs et se différencie de la concurrence.","d":"facile"},{"q":"Qu'est-ce qu'un croquis en design ?","r":"C'est un dessin rapide à main levée qui permet de visualiser une idée de forme ou de solution.","d":"facile"},{"q":"Cite un designer ou une entreprise connue pour son design.","r":"Apple (Jonathan Ive), Dyson (James Dyson), IKEA, Philippe Starck.","d":"facile"},{"q":"Qu'est-ce que l'ergonomie ?","r":"C'est l'adaptation d'un objet à l'utilisateur pour qu'il soit confortable, facile et sûr à utiliser.","d":"facile"},{"q":"Comment la démarche de projet en technologie s'apparente-t-elle au design thinking ?","r":"Les deux suivent des étapes similaires : comprendre le besoin, imaginer des solutions, prototyper, tester et améliorer.","d":"moyen"},{"q":"Pourquoi les entreprises investissent-elles dans l'innovation ?","r":"Pour rester compétitives, répondre aux nouveaux besoins, se différencier et créer de la valeur.","d":"moyen"},{"q":"Cite trois contraintes qu'un designer doit respecter.","r":"Le budget, les normes de sécurité et l'ergonomie (ou les matériaux disponibles, l'environnement, la fabricabilité).","d":"moyen"},{"q":"Comment passe-t-on d'une idée à un prototype ?","r":"Idée → croquis → modélisation 3D (CAO) → choix des matériaux → fabrication du prototype (impression 3D, découpe).","d":"moyen"},{"q":"Qu'est-ce que la propriété intellectuelle en innovation ?","r":"C'est le droit de protéger ses inventions (brevet), ses créations (droit d'auteur) et ses marques contre la copie.","d":"moyen"},{"q":"Pourquoi le design d'un objet doit-il prendre en compte le développement durable ?","r":"Pour limiter l'impact environnemental : choix de matériaux recyclables, fabrication locale, durabilité, réparabilité.","d":"moyen"},{"q":"Comment le biomimétisme inspire-t-il l'innovation technique ?","r":"En observant les solutions de la nature (forme des oiseaux pour les avions, peau du requin pour les combinaisons).","d":"moyen"},{"q":"Analyse le processus d'innovation qui a conduit à la création des écouteurs sans fil.","r":"Besoin de liberté de mouvement + miniaturisation des composants + Bluetooth basse consommation + batteries lithium compactes.","d":"difficile"},{"q":"Comment un designer utilise-t-il le moodboard dans sa démarche créative ?","r":"C'est un tableau d'inspiration visuelle (images, couleurs, textures, ambiances) qui guide les choix esthétiques du projet.","d":"difficile"},{"q":"Pourquoi certaines innovations disruptives sont-elles rejetées au début ?","r":"Parce qu'elles changent les habitudes, sont perçues comme risquées ou trop chères, avant d'être acceptées.","d":"difficile"},{"q":"Comment la fabrication additive (impression 3D) transforme-t-elle la démarche de design ?","r":"Elle permet de tester rapidement plusieurs formes, de personnaliser les objets et de réduire les contraintes de fabrication traditionnelles.","d":"difficile"},{"q":"Conçois un objet innovant pour améliorer le quotidien au collège. Décris ta démarche.","r":"Réponse libre : identifier un besoin réel, proposer une solution, choisir les matériaux, esquisser un croquis, justifier les choix.","d":"difficile"},{"q":"Comment évaluer si une innovation est réussie ?","r":"En vérifiant qu'elle répond au besoin, que les utilisateurs l'adoptent, qu'elle est viable économiquement et acceptable écologiquement.","d":"difficile"}],"L'analyse du fonctionnement d'un objet technique":[{"q":"Qu'est-ce qu'une analyse fonctionnelle ?","r":"C'est l'étude qui identifie les fonctions d'un objet technique et les solutions techniques utilisées pour les remplir.","d":"facile"},{"q":"À quoi sert le diagramme FAST ?","r":"Il décompose les fonctions de service en fonctions techniques, puis en solutions constructives.","d":"facile"},{"q":"Qu'est-ce qu'une nomenclature ?","r":"C'est la liste de toutes les pièces d'un objet avec leur numéro, leur nom, leur matériau et leur quantité.","d":"facile"},{"q":"Qu'est-ce qu'une vue éclatée ?","r":"C'est un dessin qui montre toutes les pièces d'un objet séparées les unes des autres, pour comprendre l'assemblage.","d":"facile"},{"q":"Que signifie le mot 'mécanisme' en technologie ?","r":"C'est un ensemble de pièces qui transforment ou transmettent un mouvement (engrenages, bielles, poulies).","d":"facile"},{"q":"Cite deux types de mouvements mécaniques.","r":"Le mouvement de rotation (roue) et le mouvement de translation (tiroir, piston).","d":"facile"},{"q":"Qu'est-ce qu'un engrenage ?","r":"C'est un ensemble de roues dentées qui transmettent le mouvement de rotation en modifiant la vitesse ou la force.","d":"facile"},{"q":"Comment un système pignon-crémaillère transforme-t-il le mouvement ?","r":"Le pignon (roue dentée qui tourne) entraîne la crémaillère (barre dentée) en mouvement de translation rectiligne.","d":"moyen"},{"q":"Explique le fonctionnement d'un système poulie-courroie.","r":"Une poulie motrice entraîne une courroie qui fait tourner une poulie réceptrice, transmettant le mouvement à distance.","d":"moyen"},{"q":"Qu'est-ce qu'un système bielle-manivelle ? Où le trouve-t-on ?","r":"Il transforme un mouvement de rotation en translation (ou inversement). On le trouve dans les moteurs de voiture.","d":"moyen"},{"q":"Comment lit-on un dessin technique avec plusieurs vues ?","r":"On observe la vue de face, de dessus et de droite (ou gauche) pour comprendre la forme 3D de la pièce.","d":"moyen"},{"q":"Quelle est la différence entre une coupe et une section en dessin technique ?","r":"Une coupe montre l'intérieur de l'objet coupé avec ce qui est derrière. Une section ne montre que le plan de coupe.","d":"moyen"},{"q":"Comment calcule-t-on un rapport de transmission dans un engrenage ?","r":"Rapport = nombre de dents de la roue menée ÷ nombre de dents de la roue menante.","d":"moyen"},{"q":"Pourquoi utilise-t-on des roulements à billes dans les mécanismes ?","r":"Pour réduire les frottements entre les pièces en rotation et améliorer le rendement du mécanisme.","d":"moyen"},{"q":"Analyse le fonctionnement complet d'un ouvre-boîte manuel : mécanismes, matériaux, énergie.","r":"Énergie musculaire → poignée (levier) → engrenage → molette de coupe (acier). Mécanismes : rotation, came, effet de levier.","d":"difficile"},{"q":"Compare le fonctionnement d'un frein à disque et d'un frein à tambour sur un vélo.","r":"Disque : plaquettes serrent un disque. Tambour : mâchoires s'écartent contre un cylindre. Le disque est plus efficace sous la pluie.","d":"difficile"},{"q":"Pourquoi la modélisation 3D facilite-t-elle l'analyse du fonctionnement ?","r":"Elle permet de simuler les mouvements, détecter les collisions, visualiser l'assemblage et tester sans fabriquer.","d":"difficile"},{"q":"Comment détermine-t-on le rendement mécanique d'un système ?","r":"Rendement = puissance utile en sortie ÷ puissance fournie en entrée × 100. Il est toujours inférieur à 100% à cause des frottements.","d":"difficile"},{"q":"Explique pourquoi un vélo à dérailleur a plusieurs rapports de transmission.","r":"Pour adapter l'effort du cycliste selon le terrain : petit rapport en montée (plus de force), grand rapport sur le plat (plus de vitesse).","d":"difficile"},{"q":"Propose une analyse fonctionnelle complète d'une trottinette électrique pliable.","r":"Fonctions : se déplacer, se plier, freiner, éclairer. Solutions : moteur brushless, charnière, frein à disque, LED. Énergie : batterie lithium.","d":"difficile"}],"La modélisation et la simulation":[{"q":"Qu'est-ce qu'un modèle numérique 3D ?","r":"C'est une représentation virtuelle d'un objet en trois dimensions, créée par ordinateur.","d":"facile"},{"q":"Cite un logiciel de modélisation 3D que tu connais.","r":"SketchUp, Tinkercad, FreeCAD, SolidWorks, Fusion 360 ou Blender.","d":"facile"},{"q":"À quoi sert la simulation numérique ?","r":"Elle permet de tester virtuellement le comportement d'un objet (résistance, mouvement) sans le fabriquer.","d":"facile"},{"q":"Qu'est-ce qu'un plan en 2D ?","r":"C'est un dessin à plat qui représente un objet avec des mesures, vu de face, de dessus ou de côté.","d":"facile"},{"q":"Pourquoi modélise-t-on un objet avant de le fabriquer ?","r":"Pour vérifier ses dimensions, sa forme, son assemblage et repérer les erreurs avant la fabrication.","d":"facile"},{"q":"Quelle est la différence entre un modèle et une maquette ?","r":"Un modèle est numérique (sur ordinateur), une maquette est physique (en carton, plastique, impression 3D).","d":"facile"},{"q":"Cite deux avantages de la modélisation 3D par rapport au dessin papier.","r":"On peut tourner l'objet sous tous les angles et modifier facilement les dimensions sans tout redessiner.","d":"facile"},{"q":"Comment fonctionne la simulation de résistance des matériaux ?","r":"On applique des forces virtuelles sur le modèle 3D et le logiciel calcule les zones de contrainte et de déformation.","d":"moyen"},{"q":"Qu'est-ce qu'un fichier STL et à quoi sert-il ?","r":"C'est un format de fichier 3D utilisé pour l'impression 3D. Il décrit la surface de l'objet en triangles.","d":"moyen"},{"q":"Comment la simulation aide-t-elle à optimiser un objet ?","r":"En testant différentes formes, matériaux et épaisseurs virtuellement, on trouve la meilleure solution sans gaspiller de matériaux.","d":"moyen"},{"q":"Quelle est la différence entre extrusion et révolution en modélisation 3D ?","r":"L'extrusion transforme une forme 2D en volume en l'étirant. La révolution tourne une forme 2D autour d'un axe.","d":"moyen"},{"q":"Pourquoi les architectes utilisent-ils la modélisation 3D ?","r":"Pour visualiser le bâtiment, vérifier les proportions, simuler l'éclairage et présenter le projet aux clients.","d":"moyen"},{"q":"Comment crée-t-on une pièce avec un trou en modélisation 3D ?","r":"On dessine la forme de base (extrusion), puis on crée un cylindre et on utilise l'outil de soustraction (enlèvement de matière).","d":"moyen"},{"q":"Qu'est-ce qu'un assemblage en CAO ?","r":"C'est la réunion de plusieurs pièces modélisées séparément, positionnées et contraintes entre elles comme dans la réalité.","d":"moyen"},{"q":"Compare la modélisation paramétrique et la modélisation directe.","r":"Paramétrique : chaque dimension est modifiable via des paramètres liés. Directe : on modifie les faces librement sans historique.","d":"difficile"},{"q":"Comment la simulation aérodynamique aide-t-elle à concevoir des véhicules ?","r":"Elle calcule la résistance de l'air sur la carrosserie virtuelle, permettant d'optimiser la forme pour réduire la consommation.","d":"difficile"},{"q":"Pourquoi un prototype virtuel est-il moins coûteux qu'un prototype physique ?","r":"Pas de matériaux, pas de fabrication, pas de temps d'usinage. On peut tester des dizaines de variantes gratuitement.","d":"difficile"},{"q":"Comment le BIM (Building Information Modeling) révolutionne-t-il la construction ?","r":"Il crée un modèle 3D intelligent contenant toutes les informations du bâtiment (structure, électricité, plomberie) partagé entre tous les intervenants.","d":"difficile"},{"q":"Quelles sont les limites de la simulation numérique ?","r":"Elle dépend de la qualité du modèle et des hypothèses. Elle ne remplace pas totalement les tests réels, surtout pour les phénomènes complexes.","d":"difficile"},{"q":"Comment l'impression 3D et la modélisation 3D travaillent-elles ensemble ?","r":"La modélisation crée le fichier numérique (STL), le logiciel de tranchage prépare les couches, l'imprimante 3D fabrique l'objet couche par couche.","d":"difficile"}],"Les systèmes automatisés":[{"q":"Qu'est-ce qu'un système automatisé ?","r":"C'est un système qui effectue des tâches sans intervention humaine, grâce à des capteurs, un programme et des actionneurs.","d":"facile"},{"q":"Cite les trois parties d'un système automatisé.","r":"La partie commande (traitement), la partie opérative (action) et la partie dialogue (interface homme-machine).","d":"facile"},{"q":"Donne un exemple de système automatisé dans la vie quotidienne.","r":"Un portail automatique, un distributeur de boissons, un lave-linge, un ascenseur.","d":"facile"},{"q":"Qu'est-ce qu'un capteur dans un système automatisé ?","r":"C'est un composant qui détecte une information de l'environnement (présence, température, lumière, pression).","d":"facile"},{"q":"Qu'est-ce qu'un actionneur ?","r":"C'est un composant qui exécute l'action : moteur (mouvement), vérin (poussée), résistance (chaleur), LED (lumière).","d":"facile"},{"q":"Pourquoi automatise-t-on certaines tâches ?","r":"Pour gagner du temps, réduire les erreurs, travailler en continu et effectuer des tâches dangereuses pour l'homme.","d":"facile"},{"q":"Qu'est-ce qu'une interface homme-machine ?","r":"C'est le moyen par lequel l'utilisateur communique avec le système : boutons, écran tactile, clavier, télécommande.","d":"facile"},{"q":"Décris le fonctionnement d'un distributeur automatique de boissons.","r":"L'utilisateur choisit et paie (dialogue) → le processeur vérifie le stock et le paiement (commande) → le moteur libère la boisson (opérative).","d":"moyen"},{"q":"Qu'est-ce qu'un logigramme ?","r":"C'est un schéma qui représente la logique de fonctionnement d'un système avec des conditions (si/alors) et des actions.","d":"moyen"},{"q":"Comment un capteur de présence fonctionne-t-il ?","r":"Il émet un signal (infrarouge, ultrason) et détecte s'il est réfléchi par un objet ou une personne à proximité.","d":"moyen"},{"q":"Quelle est la différence entre un système en boucle ouverte et en boucle fermée ?","r":"Boucle ouverte : pas de retour d'information. Boucle fermée : un capteur mesure le résultat et ajuste l'action en continu.","d":"moyen"},{"q":"Pourquoi un thermostat est-il un système en boucle fermée ?","r":"Parce que le capteur de température mesure en permanence la température réelle et la compare à la consigne pour ajuster le chauffage.","d":"moyen"},{"q":"Cite trois capteurs utilisés dans un robot mobile.","r":"Capteur ultrason (distance), capteur infrarouge (suivi de ligne), capteur de contact (collision).","d":"moyen"},{"q":"Qu'est-ce qu'un vérin et où l'utilise-t-on ?","r":"C'est un actionneur qui produit un mouvement rectiligne (translation). On l'utilise dans les portails, les presses, les bras robotisés.","d":"moyen"},{"q":"Conçois le logigramme d'un passage à niveau automatique.","r":"Si train détecté → barrière descend + feux clignotent + sonnerie. Si train passé → attente 10s → barrière remonte + feux éteints.","d":"difficile"},{"q":"Compare un système automatisé et un système autonome. Quelle est la différence ?","r":"Automatisé : suit un programme fixe. Autonome : prend des décisions grâce à l'IA en s'adaptant à des situations imprévues.","d":"difficile"},{"q":"Comment un système automatisé gère-t-il les pannes et les erreurs ?","r":"Par des capteurs de surveillance, des alarmes, des modes dégradés et des arrêts d'urgence programmés.","d":"difficile"},{"q":"Pourquoi l'automatisation pose-t-elle des questions éthiques et sociales ?","r":"Elle peut supprimer des emplois, créer de la dépendance technologique et poser des problèmes de responsabilité en cas d'accident.","d":"difficile"},{"q":"Comment programmer un système automatisé pour qu'il réagisse à plusieurs capteurs en même temps ?","r":"En utilisant des conditions combinées (ET, OU, NON) dans le programme, qui pondèrent les informations de chaque capteur.","d":"difficile"},{"q":"Propose un système automatisé pour optimiser l'éclairage d'une salle de classe.","r":"Capteur de luminosité + capteur de présence → si présence ET luminosité insuffisante → allumer les LED. Si absence > 5 min → éteindre.","d":"difficile"}],"Les objets connectés":[{"q":"Qu'est-ce qu'un objet connecté ?","r":"C'est un objet capable de communiquer avec d'autres appareils ou Internet, grâce à des capteurs et une connexion réseau.","d":"facile"},{"q":"Cite trois exemples d'objets connectés.","r":"Une montre connectée, un thermostat intelligent, une enceinte vocale (Alexa, Google Home).","d":"facile"},{"q":"Quel protocole utilise-t-on souvent pour connecter des objets entre eux ?","r":"Le Bluetooth, le Wi-Fi ou le Zigbee.","d":"facile"},{"q":"Que signifie IoT ?","r":"Internet of Things (Internet des Objets) : l'ensemble des objets connectés à Internet.","d":"facile"},{"q":"Pourquoi une montre connectée est-elle un objet connecté ?","r":"Parce qu'elle mesure des données (pas, rythme cardiaque) et les envoie à un smartphone via Bluetooth.","d":"facile"},{"q":"Qu'est-ce qu'un réseau domestique ?","r":"C'est l'ensemble des appareils connectés chez soi via la box Internet (Wi-Fi, câble Ethernet).","d":"facile"},{"q":"Les objets connectés ont-ils besoin d'énergie pour fonctionner ?","r":"Oui, ils utilisent des batteries, piles ou sont branchés sur secteur pour alimenter leurs capteurs et modules de communication.","d":"facile"},{"q":"Comment un objet connecté collecte-t-il des données ?","r":"Grâce à ses capteurs intégrés (température, mouvement, localisation) qui mesurent des grandeurs et les transmettent via le réseau.","d":"moyen"},{"q":"Quels sont les avantages d'une maison connectée (domotique) ?","r":"Confort (commande à distance), économies d'énergie (chauffage intelligent), sécurité (alarme, caméra) et accessibilité (personnes âgées).","d":"moyen"},{"q":"Pourquoi les données personnelles collectées par les objets connectés posent-elles un problème ?","r":"Parce qu'elles peuvent être piratées, revendues ou utilisées sans le consentement de l'utilisateur, menaçant la vie privée.","d":"moyen"},{"q":"Comment fonctionne un assistant vocal comme Alexa ou Google Home ?","r":"Il capte la voix (micro), envoie l'audio à un serveur cloud qui l'analyse par IA, puis renvoie la réponse à l'enceinte.","d":"moyen"},{"q":"Quelle est la différence entre Bluetooth et Wi-Fi pour les objets connectés ?","r":"Bluetooth : courte portée (10m), faible consommation, connexion directe. Wi-Fi : longue portée (50m), haut débit, via un routeur.","d":"moyen"},{"q":"Comment un tracker GPS connecté fonctionne-t-il ?","r":"Il reçoit les signaux de satellites GPS pour calculer sa position, puis transmet cette information via le réseau mobile ou Bluetooth.","d":"moyen"},{"q":"Pourquoi les objets connectés utilisent-ils le cloud ?","r":"Pour stocker et traiter les grandes quantités de données collectées, qui dépassent la capacité de l'objet lui-même.","d":"moyen"},{"q":"Comment sécuriser ses objets connectés contre le piratage ?","r":"Changer les mots de passe par défaut, mettre à jour le firmware, utiliser le chiffrement et segmenter le réseau Wi-Fi.","d":"difficile"},{"q":"Analyse l'impact environnemental des milliards d'objets connectés dans le monde.","r":"Consommation d'énergie, extraction de matériaux rares, déchets électroniques, pollution des data centers et émissions liées à la fabrication.","d":"difficile"},{"q":"Pourquoi l'interopérabilité est-elle un enjeu majeur pour les objets connectés ?","r":"Les objets de marques différentes doivent pouvoir communiquer ensemble. Sans standard commun, chaque écosystème reste fermé.","d":"difficile"},{"q":"Comment l'IA embarquée dans les objets connectés change-t-elle leur fonctionnement ?","r":"L'IA permet à l'objet de traiter les données localement (edge computing), d'apprendre les habitudes et de prendre des décisions sans le cloud.","d":"difficile"},{"q":"Conçois un objet connecté pour améliorer la sécurité routière à la sortie du collège.","r":"Réponse libre : capteur de trafic + afficheur de vitesse + alerte smartphone parents + données envoyées à la mairie. Justifier chaque choix.","d":"difficile"},{"q":"Compare les objets connectés de 2015 et ceux de 2025. Quelles évolutions majeures ?","r":"Autonomie batterie améliorée, IA embarquée, protocoles Matter/Thread, meilleure interopérabilité, préoccupations RGPD et vie privée.","d":"difficile"}],"La programmation":[{"q":"Qu'est-ce qu'un programme informatique ?","r":"C'est une suite d'instructions écrites dans un langage de programmation, exécutées par un ordinateur pour réaliser une tâche.","d":"facile"},{"q":"Cite deux langages de programmation utilisés au collège.","r":"Scratch (programmation par blocs) et Python (programmation textuelle).","d":"facile"},{"q":"Qu'est-ce qu'une variable en programmation ?","r":"C'est un espace de stockage qui contient une valeur (nombre, texte) et qui peut changer pendant l'exécution du programme.","d":"facile"},{"q":"Qu'est-ce qu'une boucle en programmation ?","r":"C'est une instruction qui répète un bloc de code plusieurs fois ou tant qu'une condition est vraie.","d":"facile"},{"q":"Qu'est-ce qu'une condition (instruction si/alors) ?","r":"C'est un test : si la condition est vraie, le programme exécute une action, sinon il en exécute une autre.","d":"facile"},{"q":"Quelle est la différence entre un bug et une erreur de syntaxe ?","r":"Une erreur de syntaxe empêche le programme de démarrer. Un bug est une erreur de logique : le programme fonctionne mais fait la mauvaise chose.","d":"facile"},{"q":"À quoi sert l'instruction 'répéter 10 fois' dans Scratch ?","r":"Elle exécute le bloc d'instructions qu'elle contient exactement 10 fois avant de passer à la suite.","d":"facile"},{"q":"Écris en pseudo-code un programme qui affiche 'Bonjour' si l'utilisateur a moins de 18 ans.","r":"Demander l'âge → Si âge < 18 alors Afficher 'Bonjour' Sinon Afficher 'Bienvenue'.","d":"moyen"},{"q":"Quelle est la différence entre une boucle 'pour' et une boucle 'tant que' ?","r":"'Pour' : on connaît le nombre de répétitions à l'avance. 'Tant que' : on répète tant qu'une condition est vraie, sans connaître le nombre.","d":"moyen"},{"q":"Qu'est-ce qu'une fonction en programmation ?","r":"C'est un bloc de code réutilisable qui effectue une tâche précise. On l'appelle par son nom au lieu de réécrire le code.","d":"moyen"},{"q":"Comment débogue-t-on un programme ?","r":"En lisant le code ligne par ligne, en ajoutant des affichages intermédiaires, en testant avec différentes valeurs et en utilisant un débogueur.","d":"moyen"},{"q":"Qu'est-ce qu'un algorithme ?","r":"C'est une suite d'étapes logiques et ordonnées permettant de résoudre un problème, avant même de l'écrire dans un langage de programmation.","d":"moyen"},{"q":"Comment programme-t-on un micro:bit pour allumer une LED quand on appuie sur un bouton ?","r":"Si bouton A pressé alors allumer la LED en position (2,2). Sinon éteindre toutes les LED.","d":"moyen"},{"q":"Quelle est la différence entre un événement et une action dans Scratch ?","r":"L'événement déclenche le programme (clic, touche pressée). L'action est ce que le programme fait en réponse.","d":"moyen"},{"q":"Écris un algorithme pour qu'un robot suive un mur à distance constante.","r":"Lire capteur distance → Si distance < seuil : tourner à gauche. Si distance > seuil : tourner à droite. Sinon : avancer tout droit.","d":"difficile"},{"q":"Quelle est la différence entre programmation séquentielle et programmation événementielle ?","r":"Séquentielle : les instructions s'exécutent dans l'ordre. Événementielle : le programme attend des événements et réagit quand ils se produisent.","d":"difficile"},{"q":"Pourquoi les programmeurs utilisent-ils des commentaires dans leur code ?","r":"Pour expliquer ce que fait chaque partie du code, faciliter la relecture et la maintenance par d'autres programmeurs.","d":"difficile"},{"q":"Comment la programmation est-elle utilisée dans les objets du quotidien ?","r":"Les lave-linge, voitures, feux tricolores, ascenseurs, smartphones contiennent tous des programmes qui contrôlent leur fonctionnement.","d":"difficile"},{"q":"Explique le concept de récursivité avec un exemple simple.","r":"C'est quand une fonction s'appelle elle-même. Ex : factorielle(n) = n × factorielle(n-1), avec factorielle(1) = 1.","d":"difficile"},{"q":"Comment l'intelligence artificielle change-t-elle la programmation traditionnelle ?","r":"Au lieu d'écrire des règles explicites, on fournit des données à un modèle qui apprend les règles par lui-même (apprentissage automatique).","d":"difficile"}],"La robotique":[{"q":"Qu'est-ce qu'un robot ?","r":"C'est une machine programmable capable d'effectuer des tâches automatiquement grâce à des capteurs, un processeur et des actionneurs.","d":"facile"},{"q":"Cite trois types de robots.","r":"Robot industriel (bras articulé), robot domestique (aspirateur), robot humanoïde (Pepper, NAO).","d":"facile"},{"q":"De quoi est composé un robot ?","r":"De capteurs (yeux), d'un processeur (cerveau), d'actionneurs (muscles) et d'une source d'énergie (batterie).","d":"facile"},{"q":"Qu'est-ce qui différencie un robot d'un simple automate ?","r":"Le robot est programmable et peut s'adapter à son environnement grâce à ses capteurs. L'automate répète toujours la même action.","d":"facile"},{"q":"Cite un robot utilisé en industrie et sa fonction.","r":"Un bras robotisé qui soude des pièces de carrosserie dans une usine automobile.","d":"facile"},{"q":"Pourquoi utilise-t-on des robots dans les usines ?","r":"Pour la précision, la rapidité, la régularité et pour effectuer des tâches dangereuses ou répétitives.","d":"facile"},{"q":"Qu'est-ce qu'un servomoteur ?","r":"C'est un petit moteur qui peut tourner à un angle précis, utilisé pour contrôler les articulations des robots.","d":"facile"},{"q":"Comment un robot mobile détecte-t-il les obstacles ?","r":"Avec des capteurs ultrason ou infrarouge qui mesurent la distance aux objets et envoient l'information au programme.","d":"moyen"},{"q":"Quels sont les degrés de liberté d'un bras robotisé ?","r":"Ce sont les axes de rotation possibles. Un bras à 6 degrés de liberté peut atteindre n'importe quelle position dans l'espace.","d":"moyen"},{"q":"Comment programme-t-on un robot pour qu'il suive une ligne au sol ?","r":"Avec des capteurs infrarouges : si le capteur gauche détecte la ligne, tourner à gauche ; si le droit, tourner à droite ; si les deux, avancer.","d":"moyen"},{"q":"Quelle est la différence entre un robot télécommandé et un robot autonome ?","r":"Télécommandé : contrôlé par un humain à distance. Autonome : prend ses décisions seul grâce à son programme et ses capteurs.","d":"moyen"},{"q":"Cite trois domaines d'application de la robotique.","r":"L'industrie (fabrication), la médecine (chirurgie assistée), l'exploration (Mars Rover, sous-marins).","d":"moyen"},{"q":"Comment un robot aspirateur cartographie-t-il une pièce ?","r":"Il utilise un lidar ou des capteurs pour mesurer les distances, puis crée une carte numérique de la pièce qu'il mémorise.","d":"moyen"},{"q":"Qu'est-ce que la robotique collaborative (cobot) ?","r":"Ce sont des robots conçus pour travailler aux côtés des humains en toute sécurité, avec des capteurs de force et de proximité.","d":"moyen"},{"q":"Compare un drone et un robot terrestre. Quels capteurs spécifiques chacun utilise-t-il ?","r":"Drone : gyroscope, accéléromètre, baromètre, GPS, caméra. Robot terrestre : capteurs de distance, de ligne, de contact, encodeurs de roue.","d":"difficile"},{"q":"Comment l'IA permet-elle aux robots d'apprendre de leurs erreurs ?","r":"Par l'apprentissage par renforcement : le robot essaie des actions, reçoit une récompense ou pénalité, et ajuste son comportement.","d":"difficile"},{"q":"Quels défis éthiques pose l'utilisation de robots dans la société ?","r":"Remplacement d'emplois, responsabilité en cas d'accident, dépendance technologique, robots militaires, relation homme-machine.","d":"difficile"},{"q":"Pourquoi les robots humanoïdes sont-ils si difficiles à concevoir ?","r":"La marche bipède est un problème d'équilibre très complexe. L'interaction naturelle avec les humains nécessite une IA avancée.","d":"difficile"},{"q":"Comment la robotique peut-elle aider les personnes en situation de handicap ?","r":"Prothèses robotisées, exosquelettes pour marcher, robots d'assistance à domicile, fauteuils roulants intelligents.","d":"difficile"},{"q":"Conçois un robot simple pour une tâche au collège. Décris ses capteurs, actionneurs et programme.","r":"Réponse libre : identifier un besoin (ex : distribution de copies), choisir capteurs et actionneurs, écrire l'algorithme de fonctionnement.","d":"difficile"}],"La conception d'un prototype":[{"q":"Qu'est-ce qu'un prototype ?","r":"C'est le premier exemplaire d'un objet, fabriqué pour tester son fonctionnement avant la production en série.","d":"facile"},{"q":"Pourquoi fabrique-t-on un prototype ?","r":"Pour vérifier que l'objet fonctionne, repérer les défauts et les corriger avant de lancer la production.","d":"facile"},{"q":"Qu'est-ce qu'un cahier des charges ?","r":"C'est le document qui liste les fonctions, les contraintes et les critères que l'objet doit respecter.","d":"facile"},{"q":"Cite deux outils utilisés pour fabriquer un prototype au collège.","r":"L'imprimante 3D et la découpeuse laser (ou la thermoplieuse, la perceuse).","d":"facile"},{"q":"Qu'est-ce que la CAO ?","r":"Conception Assistée par Ordinateur : dessiner et modéliser un objet en 3D sur un logiciel.","d":"facile"},{"q":"Quelle est la première étape pour concevoir un prototype ?","r":"Identifier le besoin et rédiger le cahier des charges.","d":"facile"},{"q":"Pourquoi réalise-t-on des croquis avant la modélisation 3D ?","r":"Pour explorer rapidement plusieurs idées de formes et de solutions, sans passer du temps sur l'ordinateur.","d":"facile"},{"q":"Quelles sont les étapes de la démarche de projet en technologie ?","r":"Besoin → cahier des charges → recherche de solutions → modélisation → prototypage → tests → améliorations.","d":"moyen"},{"q":"Comment teste-t-on un prototype ?","r":"En vérifiant chaque fonction du cahier des charges : dimensions, résistance, fonctionnement, ergonomie, esthétique.","d":"moyen"},{"q":"Quelle est la différence entre un prototype et une maquette ?","r":"Le prototype est fonctionnel (il marche vraiment), la maquette est un modèle réduit non fonctionnel pour visualiser l'aspect.","d":"moyen"},{"q":"Pourquoi le travail en équipe est-il important dans un projet de conception ?","r":"Il permet de combiner les compétences, de répartir les tâches et d'avoir plusieurs points de vue pour améliorer le projet.","d":"moyen"},{"q":"Comment améliore-t-on un prototype après les premiers tests ?","r":"En identifiant les problèmes (trop fragile, mal dimensionné), en modifiant la modélisation et en refabriquant les pièces corrigées.","d":"moyen"},{"q":"Pourquoi faut-il documenter chaque étape de la conception ?","r":"Pour garder une trace des choix, justifier les décisions, permettre à d'autres de reproduire ou améliorer le projet.","d":"moyen"},{"q":"Qu'est-ce que le prototypage rapide ?","r":"C'est fabriquer un prototype très rapidement grâce à l'impression 3D, la découpe laser ou d'autres machines numériques.","d":"moyen"},{"q":"Compare la démarche de conception d'un ingénieur et celle d'un collégien en technologie.","r":"L'ingénieur a des outils professionnels, des normes à respecter et des budgets. Le collégien suit la même démarche mais à une échelle simplifiée.","d":"difficile"},{"q":"Pourquoi itère-t-on dans la conception d'un prototype ?","r":"Parce que le premier essai n'est jamais parfait. Chaque itération (test → correction → re-test) améliore le produit progressivement.","d":"difficile"},{"q":"Comment un diagramme de Gantt aide-t-il à organiser un projet de prototypage ?","r":"Il visualise les tâches sur un calendrier, montre les dépendances entre tâches et identifie le chemin critique pour respecter le délai.","d":"difficile"},{"q":"Quels sont les critères pour évaluer la qualité d'un prototype ?","r":"Conformité au cahier des charges, fonctionnalité, robustesse, esthétique, ergonomie, coût de fabrication et respect des délais.","d":"difficile"},{"q":"Comment la fabrication additive a-t-elle transformé le prototypage industriel ?","r":"Elle permet de créer des formes complexes impossibles en usinage classique, en quelques heures et pour un coût réduit.","d":"difficile"},{"q":"Propose une démarche complète pour concevoir un support de smartphone éco-conçu.","r":"Besoin → CdC (léger, recyclable, stable, <5€) → croquis → modélisation CAO → impression 3D PLA → test → améliorations → documentation.","d":"difficile"}],"Le développement durable et les choix techniques":[{"q":"Qu'est-ce que le développement durable ?","r":"C'est un mode de développement qui répond aux besoins actuels sans compromettre la capacité des générations futures à répondre aux leurs.","d":"facile"},{"q":"Cite les trois piliers du développement durable.","r":"L'environnement (écologie), le social (bien-être des personnes) et l'économie (viabilité financière).","d":"facile"},{"q":"Pourquoi le recyclage est-il important pour le développement durable ?","r":"Il réduit les déchets, économise les matières premières et diminue la consommation d'énergie liée à la fabrication.","d":"facile"},{"q":"Qu'est-ce qu'une énergie renouvelable ? Cite un exemple.","r":"C'est une énergie dont la source se reconstitue naturellement. Exemples : solaire, éolienne, hydraulique.","d":"facile"},{"q":"Que signifie le logo avec les trois flèches en triangle sur un emballage ?","r":"C'est le symbole du recyclage. Il indique que le matériau est recyclable ou issu du recyclage.","d":"facile"},{"q":"Pourquoi dit-on que le plastique est un problème pour l'environnement ?","r":"Parce qu'il met des centaines d'années à se décomposer, pollue les océans et sa fabrication utilise du pétrole.","d":"facile"},{"q":"Qu'est-ce que l'empreinte carbone ?","r":"C'est la quantité de gaz à effet de serre (CO2) émise par une activité, un produit ou une personne.","d":"facile"},{"q":"Comment un choix technique peut-il réduire l'impact environnemental d'un objet ?","r":"En choisissant des matériaux recyclés, une énergie propre, une fabrication locale et une conception durable et réparable.","d":"moyen"},{"q":"Qu'est-ce que l'obsolescence programmée et pourquoi est-elle contraire au développement durable ?","r":"C'est concevoir un objet pour qu'il tombe en panne rapidement, ce qui génère plus de déchets et gaspille des ressources.","d":"moyen"},{"q":"Comment l'éco-conception intègre-t-elle le développement durable dès la phase de design ?","r":"En pensant à tout le cycle de vie : matériaux recyclables, faible consommation, réparabilité, recyclage en fin de vie.","d":"moyen"},{"q":"Pourquoi le transport des marchandises a-t-il un impact sur le développement durable ?","r":"Le transport émet du CO2, consomme des carburants fossiles et contribue à la pollution de l'air et au réchauffement climatique.","d":"moyen"},{"q":"Qu'est-ce que l'économie circulaire ?","r":"Un modèle économique où les déchets deviennent des ressources : réutiliser, réparer, recycler au lieu de jeter.","d":"moyen"},{"q":"Comment les normes environnementales influencent-elles les choix techniques des entreprises ?","r":"Elles imposent des limites de pollution, d'efficacité énergétique et de recyclabilité, obligeant les entreprises à innover.","d":"moyen"},{"q":"Pourquoi acheter local peut-il être un choix plus durable ?","r":"Moins de transport (moins de CO2), soutien à l'économie locale, produits souvent plus frais et traçables.","d":"moyen"},{"q":"Compare l'impact environnemental d'un sac en plastique, d'un sac en papier et d'un sac en tissu réutilisable.","r":"Plastique : pétrole, lent à dégrader. Papier : arbres, eau, usage unique. Tissu : fabrication énergivore mais réutilisable des centaines de fois.","d":"difficile"},{"q":"Comment la technologie peut-elle contribuer à résoudre le problème du changement climatique ?","r":"Énergies renouvelables, véhicules électriques, bâtiments BBC, capture du carbone, agriculture de précision, smart grids.","d":"difficile"},{"q":"Pourquoi le greenwashing est-il un problème pour le développement durable ?","r":"C'est quand une entreprise se prétend écologique sans l'être vraiment, trompant les consommateurs et ralentissant les vrais progrès.","d":"difficile"},{"q":"Comment la réparabilité des objets contribue-t-elle au développement durable ?","r":"Elle prolonge la durée de vie, réduit les déchets, économise les ressources et crée des emplois locaux de réparation.","d":"difficile"},{"q":"Analyse le dilemme entre croissance économique et protection de l'environnement.","r":"La croissance crée emplois et richesse mais consomme des ressources. Le développement durable cherche un équilibre : croître en polluant moins.","d":"difficile"},{"q":"Propose un projet technique au collège qui intègre les trois piliers du développement durable.","r":"Réponse libre : ex. jardin connecté solaire (environnement), partagé entre classes (social), avec matériaux recyclés à faible coût (économie).","d":"difficile"}],"Les impacts des objets techniques sur la société":[{"q":"Cite un impact positif d'Internet sur la société.","r":"Il permet d'accéder à l'information instantanément, de communiquer partout dans le monde et de travailler à distance.","d":"facile"},{"q":"Cite un impact négatif des réseaux sociaux.","r":"L'addiction aux écrans, le cyberharcèlement, la désinformation et l'atteinte à la vie privée.","d":"facile"},{"q":"Comment le smartphone a-t-il changé notre quotidien ?","r":"Il permet de téléphoner, photographier, naviguer, payer, se repérer (GPS), communiquer et se divertir, tout en un seul objet.","d":"facile"},{"q":"Qu'est-ce que la fracture numérique ?","r":"C'est l'inégalité d'accès aux technologies numériques entre les personnes, les régions ou les pays.","d":"facile"},{"q":"Pourquoi les voitures ont-elles des ceintures de sécurité ?","r":"Pour protéger les passagers en cas d'accident. C'est une innovation technique qui a sauvé des millions de vies.","d":"facile"},{"q":"Comment le lave-linge a-t-il changé la vie des familles ?","r":"Il a libéré du temps (autrefois, la lessive prenait une journée entière à la main) et facilité l'hygiène.","d":"facile"},{"q":"Qu'est-ce que les données personnelles ?","r":"Ce sont les informations qui identifient une personne : nom, adresse, photos, historique de navigation, localisation.","d":"facile"},{"q":"Comment les transports ont-ils transformé la société au cours des 200 dernières années ?","r":"Train, voiture, avion ont réduit les distances, favorisé le commerce international, l'urbanisation et le tourisme.","d":"moyen"},{"q":"Pourquoi la protection des données personnelles est-elle un enjeu majeur ?","r":"Parce que les entreprises collectent massivement nos données pour les vendre ou les utiliser, ce qui menace notre vie privée.","d":"moyen"},{"q":"Comment l'automatisation impacte-t-elle l'emploi ?","r":"Elle supprime certains emplois répétitifs mais en crée de nouveaux (maintenance, programmation, design). C'est une transformation, pas seulement une perte.","d":"moyen"},{"q":"Quel est l'impact de la fast fashion sur l'environnement et la société ?","r":"Pollution (teintures, transport), déchets textiles massifs, conditions de travail précaires dans les usines et surconsommation.","d":"moyen"},{"q":"Comment la médecine a-t-elle bénéficié des progrès techniques ?","r":"Scanner, IRM, chirurgie robotisée, prothèses, vaccins, télémédecine ont augmenté l'espérance et la qualité de vie.","d":"moyen"},{"q":"Qu'est-ce que le RGPD et pourquoi a-t-il été créé ?","r":"Le Règlement Général sur la Protection des Données protège les citoyens européens contre l'utilisation abusive de leurs données personnelles.","d":"moyen"},{"q":"Comment les objets techniques ont-ils modifié les métiers traditionnels ?","r":"L'agriculture mécanisée, l'artisanat assisté par ordinateur, la vente en ligne ont transformé ou remplacé des métiers séculaires.","d":"moyen"},{"q":"L'intelligence artificielle va-t-elle remplacer les enseignants ? Argumente.","r":"Peu probable : l'IA peut aider (exercices adaptatifs, correction) mais la relation humaine, la motivation et l'éducation sociale restent irremplaçables.","d":"difficile"},{"q":"Comment les réseaux sociaux influencent-ils les démocraties ?","r":"Ils facilitent la liberté d'expression et la mobilisation citoyenne, mais permettent aussi la désinformation, la manipulation et la polarisation.","d":"difficile"},{"q":"Pourquoi l'accès à Internet est-il considéré comme un droit fondamental par certains pays ?","r":"Parce qu'il conditionne l'accès à l'éducation, à l'emploi, aux services publics et à la participation citoyenne.","d":"difficile"},{"q":"Analyse l'impact sociétal des voitures autonomes si elles se généralisent.","r":"Moins d'accidents, mobilité pour les personnes âgées, mais perte d'emplois (chauffeurs), questions de responsabilité juridique et de cybersécurité.","d":"difficile"},{"q":"Comment concilier progrès technique et respect des libertés individuelles ?","r":"Par des lois (RGPD), la transparence des algorithmes, le consentement éclairé et le contrôle citoyen sur les technologies.","d":"difficile"},{"q":"Rédige un avis argumenté sur l'utilisation des caméras de surveillance dans les villes.","r":"Réponse libre mais doit peser le pour (sécurité, dissuasion) et le contre (vie privée, surveillance de masse, coût, efficacité réelle).","d":"difficile"}],"Les réseaux informatiques":[{"q":"Qu'est-ce qu'un réseau informatique ?","r":"C'est un ensemble d'ordinateurs et d'appareils connectés entre eux pour échanger des données.","d":"facile"},{"q":"Que signifie LAN ?","r":"Local Area Network : un réseau local, limité à un bâtiment ou une salle (ex : réseau du collège).","d":"facile"},{"q":"Qu'est-ce qu'une adresse IP ?","r":"C'est un numéro unique qui identifie chaque appareil sur un réseau, comme une adresse postale (ex : 192.168.1.10).","d":"facile"},{"q":"À quoi sert un câble Ethernet ?","r":"À relier un appareil au réseau par une connexion filaire, plus stable et rapide que le Wi-Fi.","d":"facile"},{"q":"Qu'est-ce que le Wi-Fi ?","r":"C'est une technologie de connexion sans fil qui permet aux appareils de se connecter au réseau via des ondes radio.","d":"facile"},{"q":"Cite deux équipements réseau que l'on trouve dans un collège.","r":"Un switch (commutateur) et un routeur (ou une borne Wi-Fi, un serveur).","d":"facile"},{"q":"Qu'est-ce qu'Internet ?","r":"C'est un réseau mondial qui relie des millions de réseaux locaux entre eux, permettant l'échange d'informations à l'échelle planétaire.","d":"facile"},{"q":"À quoi sert le protocole DHCP ?","r":"Il attribue automatiquement une adresse IP à chaque appareil qui se connecte au réseau, sans configuration manuelle.","d":"moyen"},{"q":"Quelle est la différence entre un switch et un routeur ?","r":"Le switch connecte les appareils au sein d'un même réseau local (LAN). Le routeur relie le réseau local à Internet ou à un autre réseau.","d":"moyen"},{"q":"Qu'est-ce qu'une adresse IP en version 4 (IPv4) ? Donne un exemple.","r":"C'est une suite de 4 nombres séparés par des points, chacun entre 0 et 255. Exemple : 192.168.0.1.","d":"moyen"},{"q":"À quoi sert le protocole DNS ?","r":"Il traduit les noms de domaine (ex : google.com) en adresses IP (ex : 142.250.74.206) pour que les ordinateurs puissent communiquer.","d":"moyen"},{"q":"Quelle est la différence entre un réseau LAN et un réseau WAN ?","r":"Le LAN est un réseau local (une salle, un bâtiment). Le WAN est un réseau étendu qui couvre une grande zone géographique (ex : Internet).","d":"moyen"},{"q":"Pourquoi utilise-t-on un masque de sous-réseau ?","r":"Il permet de distinguer la partie réseau et la partie machine d'une adresse IP, et de savoir si deux appareils sont sur le même réseau.","d":"moyen"},{"q":"Comment un appareil obtient-il une adresse IP automatiquement ?","r":"Il envoie une requête DHCP Discover, le serveur DHCP répond avec une adresse disponible (DHCP Offer), l'appareil l'accepte (DHCP Request) et le serveur confirme (DHCP Ack).","d":"moyen"},{"q":"Décris le chemin d'une requête web depuis ton navigateur jusqu'au serveur de google.com.","r":"Navigateur → requête DNS → résolution en IP → requête HTTP via routeur → Internet (routeurs successifs) → serveur Google → réponse renvoyée par le même chemin.","d":"difficile"},{"q":"Pourquoi passe-t-on de l'IPv4 à l'IPv6 ?","r":"L'IPv4 n'offre que 4,3 milliards d'adresses, insuffisant pour tous les appareils connectés. L'IPv6 offre 340 sextillions d'adresses.","d":"difficile"},{"q":"Compare le Wi-Fi et le câble Ethernet en termes de débit, fiabilité et sécurité.","r":"Ethernet : débit plus élevé (1-10 Gbps), stable, difficile à intercepter. Wi-Fi : pratique et mobile, mais débit plus faible, sensible aux interférences et aux intrusions.","d":"difficile"},{"q":"Comment un pare-feu protège-t-il un réseau ?","r":"Il filtre les communications entrantes et sortantes selon des règles définies, bloquant les connexions non autorisées et les tentatives d'intrusion.","d":"difficile"},{"q":"Explique le modèle client-serveur avec un exemple concret.","r":"Le client (navigateur) envoie une requête au serveur (site web). Le serveur traite la demande et renvoie la réponse (page HTML). Exemple : accéder à Pronote.","d":"difficile"},{"q":"Conçois le réseau informatique d'un petit collège : quels équipements, quelle architecture ?","r":"Box Internet → routeur → switch principal → switches par bâtiment → bornes Wi-Fi + prises Ethernet. Serveur local pour Pronote. Pare-feu pour la sécurité. Adressage DHCP.","d":"difficile"}],"La domotique":[{"q":"Qu'est-ce que la domotique ?","r":"C'est l'ensemble des technologies qui automatisent et contrôlent les équipements d'une maison (éclairage, chauffage, sécurité).","d":"facile"},{"q":"Cite trois équipements domotiques que l'on peut trouver dans une maison.","r":"Un thermostat connecté, des volets roulants automatiques, une caméra de surveillance.","d":"facile"},{"q":"Comment peut-on contrôler les équipements domotiques à distance ?","r":"Avec un smartphone, une tablette ou un ordinateur connecté à Internet, via une application dédiée.","d":"facile"},{"q":"Qu'est-ce qu'un détecteur de mouvement ?","r":"C'est un capteur qui détecte la présence d'une personne et peut déclencher un éclairage ou une alarme automatiquement.","d":"facile"},{"q":"Pourquoi la domotique permet-elle de faire des économies d'énergie ?","r":"Parce qu'elle régule automatiquement le chauffage, l'éclairage et les appareils en fonction des besoins réels (présence, heure, température).","d":"facile"},{"q":"Qu'est-ce qu'un scénario domotique ?","r":"C'est une suite d'actions programmées qui se déclenchent ensemble. Ex : le scénario 'Départ' éteint les lumières, baisse le chauffage et active l'alarme.","d":"facile"},{"q":"Cite un exemple d'assistant vocal utilisé en domotique.","r":"Alexa (Amazon), Google Home (Google) ou Siri (Apple).","d":"facile"},{"q":"Quels sont les trois domaines principaux de la domotique ?","r":"Le confort (éclairage, volets), la sécurité (alarme, caméra, détecteur de fumée) et la gestion d'énergie (chauffage, électricité).","d":"moyen"},{"q":"Comment un thermostat connecté régule-t-il la température d'une maison ?","r":"Il mesure la température ambiante avec un capteur, la compare à la consigne programmée et commande la chaudière pour chauffer ou arrêter.","d":"moyen"},{"q":"Quels protocoles de communication sont utilisés en domotique ?","r":"Le Wi-Fi, le Bluetooth, le Zigbee, le Z-Wave et le protocole KNX pour les installations professionnelles.","d":"moyen"},{"q":"Pourquoi la domotique améliore-t-elle l'accessibilité pour les personnes à mobilité réduite ?","r":"Elle permet de commander les équipements à la voix ou à distance (lumières, portes, volets) sans se déplacer.","d":"moyen"},{"q":"Qu'est-ce qu'une box domotique ?","r":"C'est le cerveau de l'installation domotique : elle centralise la communication entre tous les capteurs et actionneurs de la maison.","d":"moyen"},{"q":"Comment un système d'alarme domotique fonctionne-t-il ?","r":"Des capteurs (mouvement, ouverture) détectent une intrusion → la box analyse → déclenche sirène + notification smartphone + éventuellement appel au centre de surveillance.","d":"moyen"},{"q":"Pourquoi le protocole Zigbee est-il souvent préféré au Wi-Fi pour la domotique ?","r":"Parce qu'il consomme très peu d'énergie, permet un réseau maillé (chaque appareil relaye le signal) et supporte des centaines d'appareils.","d":"moyen"},{"q":"Conçois un système domotique complet pour une maison économe en énergie.","r":"Panneaux solaires + thermostat intelligent + volets automatiques (selon soleil) + éclairage LED à détection + gestion de la consommation par application + batterie de stockage.","d":"difficile"},{"q":"Quels risques de cybersécurité pose une maison connectée ?","r":"Piratage des caméras, prise de contrôle de la serrure connectée, vol de données personnelles, espionnage via les assistants vocaux, attaques par déni de service.","d":"difficile"},{"q":"Compare une installation domotique filaire (KNX) et sans fil (Zigbee). Avantages et inconvénients.","r":"KNX : très fiable, pas d'interférences, mais installation coûteuse et complexe (câblage). Zigbee : facile à installer, évolutif, mais portée limitée et sensible aux interférences.","d":"difficile"},{"q":"Comment l'intelligence artificielle transforme-t-elle la domotique ?","r":"L'IA apprend les habitudes des occupants (horaires, préférences), anticipe les besoins (préchauffage, éclairage) et optimise la consommation sans programmation manuelle.","d":"difficile"},{"q":"Pourquoi l'interopérabilité est-elle le principal défi de la domotique aujourd'hui ?","r":"Chaque fabricant utilise son propre protocole et application. Le protocole Matter vise à unifier tout cela, mais l'adoption est encore en cours.","d":"difficile"},{"q":"Analyse l'impact environnemental global d'une maison domotique.","r":"Positif : économies d'énergie (20-30%), optimisation du chauffage/éclairage. Négatif : fabrication des capteurs (métaux rares), consommation électrique des appareils en veille, déchets électroniques.","d":"difficile"}],"L'intelligence artificielle":[{"q":"Qu'est-ce que l'intelligence artificielle (IA) ?","r":"C'est un ensemble de technologies qui permettent à une machine d'imiter des capacités humaines comme apprendre, raisonner ou reconnaître des images.","d":"facile"},{"q":"Cite trois exemples d'utilisation de l'IA dans la vie quotidienne.","r":"Les assistants vocaux (Siri, Alexa), la reconnaissance faciale du téléphone, les recommandations de vidéos sur YouTube.","d":"facile"},{"q":"Qu'est-ce qu'un chatbot ?","r":"C'est un programme informatique capable de dialoguer avec un humain en langage naturel, comme ChatGPT ou un assistant de service client.","d":"facile"},{"q":"L'IA peut-elle penser comme un être humain ?","r":"Non, l'IA ne pense pas. Elle traite des données et identifie des schémas (patterns) grâce à des calculs mathématiques, sans conscience ni compréhension.","d":"facile"},{"q":"Qu'est-ce que la reconnaissance d'image par IA ?","r":"C'est la capacité d'une IA à identifier des objets, des visages ou des scènes dans une photo ou une vidéo.","d":"facile"},{"q":"Cite un domaine où l'IA aide les médecins.","r":"L'analyse d'images médicales (radiographies, IRM) pour détecter des tumeurs ou des maladies plus rapidement.","d":"facile"},{"q":"Qu'est-ce qu'un algorithme ?","r":"C'est une suite d'instructions logiques et ordonnées que la machine suit pour résoudre un problème ou effectuer une tâche.","d":"facile"},{"q":"Quelle est la différence entre IA faible et IA forte ?","r":"L'IA faible est spécialisée dans une tâche précise (jouer aux échecs, reconnaître des visages). L'IA forte, qui n'existe pas encore, serait capable de raisonner comme un humain sur n'importe quel sujet.","d":"moyen"},{"q":"Comment une IA apprend-elle à reconnaître un chat sur une photo ?","r":"On lui montre des milliers de photos de chats étiquetées. L'IA ajuste ses paramètres internes jusqu'à reconnaître les caractéristiques communes (forme des oreilles, museau, fourrure).","d":"moyen"},{"q":"Qu'est-ce que l'apprentissage supervisé ?","r":"C'est quand on entraîne l'IA avec des données déjà étiquetées (ex : cette image est un chat / pas un chat) pour qu'elle apprenne à classer de nouvelles données.","d":"moyen"},{"q":"Qu'est-ce qu'un réseau de neurones artificiels ?","r":"C'est un modèle informatique inspiré du cerveau humain, composé de couches de neurones virtuels connectés entre eux, qui traitent l'information par apprentissage.","d":"moyen"},{"q":"Pourquoi l'IA a-t-elle besoin de grandes quantités de données ?","r":"Parce que plus elle a d'exemples, plus elle peut identifier des schémas précis et faire des prédictions fiables. Peu de données = résultats peu fiables.","d":"moyen"},{"q":"Comment l'IA est-elle utilisée dans les voitures autonomes ?","r":"Elle analyse en temps réel les images des caméras, les données du lidar et du radar pour détecter les obstacles, lire les panneaux et prendre des décisions de conduite.","d":"moyen"},{"q":"Qu'est-ce qu'un biais algorithmique ?","r":"C'est quand une IA prend des décisions injustes ou discriminatoires parce que les données d'entraînement contenaient elles-mêmes des biais humains.","d":"moyen"},{"q":"Compare l'apprentissage supervisé, non supervisé et par renforcement.","r":"Supervisé : données étiquetées, l'IA apprend la bonne réponse. Non supervisé : données non étiquetées, l'IA trouve des structures. Par renforcement : l'IA apprend par essai-erreur avec récompenses/pénalités.","d":"difficile"},{"q":"Pourquoi l'IA générative (comme ChatGPT ou Midjourney) soulève-t-elle des questions éthiques ?","r":"Risque de désinformation (deepfakes), plagiat, remplacement d'emplois créatifs, droits d'auteur sur les données d'entraînement, utilisation malveillante.","d":"difficile"},{"q":"Comment l'IA peut-elle aider à lutter contre le changement climatique ?","r":"Optimisation énergétique des bâtiments, prévision météo précise, agriculture de précision, modélisation climatique, gestion intelligente des réseaux électriques.","d":"difficile"},{"q":"Pourquoi dit-on que l'IA est une 'boîte noire' et pourquoi est-ce un problème ?","r":"Parce qu'on ne comprend pas toujours comment l'IA prend ses décisions (le raisonnement interne est opaque). C'est problématique en médecine, justice ou recrutement où la transparence est nécessaire.","d":"difficile"},{"q":"Comment l'IA pourrait-elle transformer l'éducation dans les 10 prochaines années ?","r":"Parcours d'apprentissage personnalisés, correction automatique, tutorat intelligent, création de contenus adaptés au niveau de chaque élève, traduction en temps réel.","d":"difficile"},{"q":"Rédige un avis argumenté : faut-il encadrer l'IA par des lois ?","r":"Réponse libre mais doit argumenter les deux côtés : pour (protection des données, transparence, responsabilité, prévention des biais) et contre (freiner l'innovation, difficulté d'application internationale).","d":"difficile"}]};
+
+// Cycles
+const CYCLES = {
+  cycle3: ["Les objets techniques du quotidien","Les fonctions d'usage et d'estime","Les matériaux et leurs propriétés","Les chaînes d'énergie","Les chaînes d'information","Les sources d'énergie","La fabrication d'un objet simple","L'évolution des objets techniques","Les besoins et les solutions techniques","Les objets techniques et l'environnement"],
+  cycle4: ["Le design, l'innovation et la créativité","L'analyse du fonctionnement d'un objet technique","La modélisation et la simulation","Les systèmes automatisés","Les objets connectés","La programmation","La robotique","La conception d'un prototype","Le développement durable et les choix techniques","Les impacts des objets techniques sur la société"],
+  extra: ["Les réseaux informatiques","La domotique","L'intelligence artificielle"]
+};
+
+// Points par difficulté
+const POINTS = {facile:2, moyen:5, difficile:10};
+
+// ═════════════════════════════════════════════════════════════════
+// CODE GOOGLE APPS SCRIPT (à copier dans script.google.com)
+// ═════════════════════════════════════════════════════════════════
+const APPS_SCRIPT_CODE = `/**
+ * EduRoulette V3 — Backend Google Apps Script
+ * BeluSoft-Tchapy © 2026
+ * Déploie en Application Web : "Exécuter en tant que MOI", accès "Tout le monde"
+ */
+
+function doGet(e) {
+  const action = (e.parameter.action || '').toLowerCase();
+  if (action === 'ping') return jsonResponse({ok:true, message:'EduRoulette V3 connected'});
+  if (action === 'login') return loginEleve(e.parameter.code);
+  return jsonResponse({ok:false, error:'unknown_action'});
+}
+
+function doPost(e) {
+  try {
+    const data = JSON.parse(e.postData.contents);
+    const action = (data.action || '').toLowerCase();
+    if (action === 'sync_classe') return syncClasse(data);
+    if (action === 'save_session') return saveSession(data);
+    if (action === 'get_progression') return getProgression(data);
+    return jsonResponse({ok:false, error:'unknown_action'});
+  } catch(err) {
+    return jsonResponse({ok:false, error:err.toString()});
+  }
+}
+
+function jsonResponse(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function setup() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  if (!ss.getSheetByName('Élèves')) {
+    const s = ss.insertSheet('Élèves');
+    s.getRange(1,1,1,5).setValues([['Code','Nom','Prénom','Classe','Date_creation']]);
+  }
+  if (!ss.getSheetByName('Sessions')) {
+    const s = ss.insertSheet('Sessions');
+    s.getRange(1,1,1,7).setValues([['Date','Code_eleve','Classe','Theme','Difficulte','Note','Note_max']]);
+  }
+  if (!ss.getSheetByName('Cumul')) {
+    const s = ss.insertSheet('Cumul');
+    s.getRange(1,1,1,5).setValues([['Code_eleve','Nb_questions','Total_points','Total_max','Derniere_session']]);
+  }
+  return jsonResponse({ok:true, message:'Feuilles initialisées'});
+}
+
+function syncClasse(data) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName('Élèves') || ss.insertSheet('Élèves');
+  const eleves = data.eleves || [];
+  const classe = data.classe || 'Classe';
+  const dateNow = new Date().toISOString().split('T')[0];
+  // Supprime les anciens élèves de cette classe
+  const all = sheet.getDataRange().getValues();
+  for (let i = all.length - 1; i >= 1; i--) {
+    if (all[i][3] === classe) sheet.deleteRow(i+1);
+  }
+  // Ajoute les nouveaux
+  eleves.forEach(e => {
+    sheet.appendRow([e.code, e.nom, e.prenom, classe, dateNow]);
+  });
+  return jsonResponse({ok:true, count:eleves.length});
+}
+
+function saveSession(data) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName('Sessions') || setup();
+  const cumul = ss.getSheetByName('Cumul');
+  const dateNow = new Date().toISOString();
+  (data.results || []).forEach(r => {
+    sheet.appendRow([dateNow, r.code, r.classe, r.theme, r.difficulte, r.note, r.note_max]);
+    // Update cumul
+    if (cumul) {
+      const all = cumul.getDataRange().getValues();
+      let found = false;
+      for (let i = 1; i < all.length; i++) {
+        if (all[i][0] === r.code) {
+          cumul.getRange(i+1, 2).setValue(all[i][1] + 1);
+          cumul.getRange(i+1, 3).setValue(all[i][2] + r.note);
+          cumul.getRange(i+1, 4).setValue(all[i][3] + r.note_max);
+          cumul.getRange(i+1, 5).setValue(dateNow);
+          found = true;
+          break;
+        }
+      }
+      if (!found) cumul.appendRow([r.code, 1, r.note, r.note_max, dateNow]);
+    }
+  });
+  return jsonResponse({ok:true, saved:(data.results||[]).length});
+}
+
+function loginEleve(code) {
+  if (!code) return jsonResponse({ok:false, error:'no_code'});
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const eleves = ss.getSheetByName('Élèves');
+  if (!eleves) return jsonResponse({ok:false, error:'not_setup'});
+  const all = eleves.getDataRange().getValues();
+  for (let i = 1; i < all.length; i++) {
+    if (all[i][0] === code) {
+      const sessions = ss.getSheetByName('Sessions').getDataRange().getValues();
+      const mySessions = sessions.filter(s => s[1] === code);
+      const cumul = ss.getSheetByName('Cumul').getDataRange().getValues();
+      const myCumul = cumul.find(c => c[0] === code) || ['',0,0,0,''];
+      return jsonResponse({
+        ok:true,
+        eleve:{nom:all[i][1], prenom:all[i][2], classe:all[i][3], code:code},
+        sessions: mySessions.map(s => ({date:s[0], theme:s[3], difficulte:s[4], note:s[5], note_max:s[6]})),
+        total:{nb:myCumul[1], pts:myCumul[2], max:myCumul[3]}
+      });
+    }
+  }
+  return jsonResponse({ok:false, error:'code_not_found'});
+}
+
+function getProgression(data) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const cumul = ss.getSheetByName('Cumul').getDataRange().getValues();
+  const result = {};
+  (data.codes || []).forEach(code => {
+    const row = cumul.find(c => c[0] === code);
+    if (row) result[code] = {nb:row[1], pts:row[2], max:row[3]};
+    else result[code] = {nb:0, pts:0, max:0};
+  });
+  return jsonResponse({ok:true, progression:result});
+}`;
+
+// ═════════════════════════════════════════════════════════════════
+// EDUROULETTE V3 — APPLICATION
+// ═════════════════════════════════════════════════════════════════
+const App = (() => {
+
+const state = {
+  classes: {},          // {classeId: {nom, eleves:[{nom,prenom,code}], stats:{}}}
+  currentClasse: null,
+  customThemes: {},     // {themeName: [{q,r,d}]}
+  selectedTheme: null,
+  selectedDiff: 'all',
+  config: {nbEleves:3, nbQuestions:2, mode:'individuel', timer:30, niveau:'4eme', objectif:18},
+  scriptUrl: '',
+  muted: false,
+  // session en cours
+  session: null,
+  questionIdx: 0,
+  currentScore: null,
+  timerInterval: null,
+  timerRemaining: 0,
+  timerPaused: false,
+};
+
+// ─── STORAGE ───────────────────────────────────────────────
+const STORAGE_KEY = 'eduroulette_v3';
+
+function loadStorage() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const data = JSON.parse(raw);
+      Object.assign(state, data);
+    }
+  } catch(e) { console.warn('Storage load err', e); }
+}
+
+function saveStorage() {
+  try {
+    const toSave = {
+      classes: state.classes,
+      currentClasse: state.currentClasse,
+      customThemes: state.customThemes,
+      config: state.config,
+      scriptUrl: state.scriptUrl,
+      muted: state.muted,
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
+  } catch(e) { console.warn('Storage save err', e); }
+}
+
+// ─── AUDIO ───────────────────────────────────────────────
+let audioCtx = null;
+function getCtx() { if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)(); return audioCtx; }
+function playTone(f,type='sine',dur=0.15,vol=0.3) {
+  if (state.muted) return;
+  try {
+    const ctx = getCtx(), osc = ctx.createOscillator(), g = ctx.createGain();
+    osc.connect(g); g.connect(ctx.destination);
+    osc.type = type; osc.frequency.setValueAtTime(f, ctx.currentTime);
+    g.gain.setValueAtTime(vol, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+dur);
+    osc.start(); osc.stop(ctx.currentTime+dur);
+  } catch(e){}
+}
+function playSlot(i) { setTimeout(()=>playTone(440+i*110,'square',0.12,0.2), i*80); }
+function playWin() { [523,659,784,1047].forEach((f,i)=>setTimeout(()=>playTone(f,'sine',0.25,0.3), i*120)); }
+function playScore(t) {
+  if (t==='max') { playTone(660,'sine',0.15,0.3); setTimeout(()=>playTone(880,'sine',0.2,0.3),150); }
+  else if (t==='half') playTone(440,'triangle',0.2,0.25);
+  else playTone(220,'sawtooth',0.25,0.25);
+}
+
+// ─── TOAST ───────────────────────────────────────────────
+function toast(msg, type='info') {
+  document.querySelectorAll('.toast').forEach(t=>t.remove());
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(), 3500);
+}
+
+// ─── CSV PARSER (Pronote format) ───────────────────────────────────────────────
+function parseCSV(text) {
+  // Normalise les retours à la ligne
+  text = text.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
+  const lines = text.split('\n').filter(l => l.trim());
+  // Skip 2 first lines (Pronote headers)
+  const dataLines = lines.slice(2);
+  const eleves = [];
+  for (const line of dataLines) {
+    // Try ; first, then ,
+    const sep = line.includes(';') ? ';' : ',';
+    const parts = line.split(sep).map(p => p.trim().replace(/^"|"$/g,''));
+    if (!parts[0] || parts[0].toLowerCase().includes('élève') || parts[0].startsWith('Moy')) continue;
+    const fullName = parts[0];
+    // Split by NOM (uppercase) / Prénom
+    const tokens = fullName.split(/\s+/);
+    let nomParts = [], prenomParts = [], switched = false;
+    for (const t of tokens) {
+      if (!switched && /^[A-ZÉÈÀÂÊÎÔÙÛÄËÏÜÇ\-]+$/.test(t)) nomParts.push(t);
+      else { switched = true; prenomParts.push(t); }
+    }
+    const nom = nomParts.join(' ');
+    const prenom = prenomParts.join(' ');
+    if (nom) eleves.push({nom, prenom});
+  }
+  return eleves;
+}
+
+function generateCode(classeId, idx) {
+  const prefix = classeId.toUpperCase().replace(/[^A-Z0-9]/g,'').substring(0,4);
+  return `${prefix}-${String(idx+1).padStart(3,'0')}`;
+}
+
+// ─── CLASSE MANAGEMENT ───────────────────────────────────────────────
+let pendingEleves = null;
+
+function handleCSVFile(file) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    const eleves = parseCSV(e.target.result);
+    if (!eleves.length) { toast('Aucun élève détecté dans le CSV', 'error'); return; }
+    pendingEleves = eleves;
+    document.getElementById('naming-count').textContent = eleves.length;
+    document.getElementById('eleves-preview').textContent = eleves.map(e => `${e.prenom} ${e.nom}`).join(' · ');
+    document.getElementById('classe-naming').classList.remove('hidden');
+    document.getElementById('drop-zone').style.display = 'none';
+    document.getElementById('classe-name-input').focus();
+  };
+  reader.readAsText(file, 'UTF-8');
+}
+
+function confirmClasse() {
+  const name = document.getElementById('classe-name-input').value.trim();
+  if (!name) { toast('Donne un nom à la classe', 'error'); return; }
+  if (!pendingEleves) return;
+  const classeId = name.replace(/\s+/g,'_').toLowerCase();
+  const elevesWithCodes = pendingEleves.map((e,i) => ({...e, code: generateCode(classeId, i)}));
+  state.classes[classeId] = {
+    nom: name,
+    eleves: elevesWithCodes,
+    stats: {},
+    createdAt: Date.now(),
+  };
+  state.currentClasse = classeId;
+  pendingEleves = null;
+  saveStorage();
+  document.getElementById('classe-naming').classList.add('hidden');
+  document.getElementById('drop-zone').style.display = 'block';
+  document.getElementById('classe-name-input').value = '';
+  toast(`✅ Classe "${name}" enregistrée (${elevesWithCodes.length} élèves)`, 'success');
+  // Sync GAS si configuré
+  if (state.scriptUrl) syncClasseToGAS(classeId);
+  renderClasses();
+}
+
+function renderClasses() {
+  const list = document.getElementById('saved-classes-list');
+  const section = document.getElementById('saved-classes-section');
+  const loaded = document.getElementById('classe-loaded');
+  const ids = Object.keys(state.classes);
+  if (ids.length === 0) {
+    section.classList.add('hidden');
+    loaded.classList.add('hidden');
+    return;
+  }
+  section.classList.remove('hidden');
+  list.innerHTML = ids.map(id => {
+    const c = state.classes[id];
+    const active = id === state.currentClasse;
+    return `<div class="saved-class-item ${active?'active':''}" onclick="App.selectClasse('${id}')">
+      <span class="sc-icon">${active?'✅':'📚'}</span>
+      <div class="sc-info">
+        <div class="sc-name">${c.nom}</div>
+        <div class="sc-count">${c.eleves.length} élèves</div>
+      </div>
+    </div>`;
+  }).join('');
+  if (state.currentClasse && state.classes[state.currentClasse]) {
+    const c = state.classes[state.currentClasse];
+    loaded.classList.remove('hidden');
+    document.getElementById('classe-nom').textContent = c.nom;
+    document.getElementById('classe-count').textContent = `${c.eleves.length} élèves`;
+    renderElevesList();
+  } else {
+    loaded.classList.add('hidden');
+  }
+}
+
+function selectClasse(id) {
+  state.currentClasse = id;
+  saveStorage();
+  renderClasses();
+}
+
+function showClasseList() {
+  state.currentClasse = null;
+  saveStorage();
+  renderClasses();
+}
+
+function renderElevesList() {
+  if (!state.currentClasse) return;
+  const c = state.classes[state.currentClasse];
+  const ul = document.getElementById('eleves-list-active');
+  ul.innerHTML = '<ul>' + c.eleves.map(e => `<li>${e.prenom} <strong>${e.nom}</strong></li>`).join('') + '</ul>';
+}
+
+function toggleElevesList() {
+  document.getElementById('eleves-list-active').classList.toggle('hidden');
+}
+
+function addAnotherClasse() {
+  state.currentClasse = null;
+  saveStorage();
+  renderClasses();
+  document.getElementById('drop-zone').scrollIntoView({behavior:'smooth'});
+}
+
+function deleteCurrentClasse() {
+  if (!state.currentClasse) return;
+  if (!confirm(`Supprimer définitivement la classe "${state.classes[state.currentClasse].nom}" ?`)) return;
+  delete state.classes[state.currentClasse];
+  state.currentClasse = Object.keys(state.classes)[0] || null;
+  saveStorage();
+  renderClasses();
+  toast('🗑 Classe supprimée', 'info');
+}
+
+// ─── GOOGLE APPS SCRIPT SYNC ───────────────────────────────────────────────
+async function gasCall(action, data={}) {
+  if (!state.scriptUrl) throw new Error('script_url_missing');
+  const res = await fetch(state.scriptUrl, {
+    method: 'POST',
+    body: JSON.stringify({action, ...data}),
+    headers: {'Content-Type':'text/plain'} // CORS workaround
+  });
+  return await res.json();
+}
+
+async function syncClasseToGAS(classeId) {
+  if (!state.scriptUrl) return;
+  const c = state.classes[classeId];
+  if (!c) return;
+  const status = document.getElementById('sync-status');
+  status.classList.remove('hidden','ok','ko');
+  status.classList.add('pending');
+  status.textContent = '☁️ Synchronisation en cours...';
+  try {
+    const result = await gasCall('sync_classe', {classe: c.nom, eleves: c.eleves});
+    if (result.ok) {
+      status.classList.remove('pending','ko');
+      status.classList.add('ok');
+      status.textContent = `✅ Synchronisé — ${result.count} élèves dans Google Sheet`;
+    } else throw new Error(result.error);
+  } catch(e) {
+    status.classList.remove('pending','ok');
+    status.classList.add('ko');
+    status.textContent = `❌ Erreur de sync : ${e.message}`;
+  }
+}
+
+// ─── SETTINGS ───────────────────────────────────────────────
+const settings = {
+  toggle() {
+    const panel = document.getElementById('settings-panel');
+    const arrow = document.getElementById('settings-arrow');
+    panel.classList.toggle('hidden');
+    arrow.textContent = panel.classList.contains('hidden') ? '▼' : '▲';
+  },
+  save() {
+    state.scriptUrl = document.getElementById('script-url-input').value.trim();
+    saveStorage();
+    toast('✅ Paramètres enregistrés', 'success');
+  },
+  async testConnection() {
+    const url = document.getElementById('script-url-input').value.trim();
+    const result = document.getElementById('script-test-result');
+    result.classList.remove('hidden','ok','ko');
+    result.textContent = '⏳ Test en cours...';
+    try {
+      const res = await fetch(url + '?action=ping');
+      const data = await res.json();
+      if (data.ok) {
+        result.classList.add('ok');
+        result.textContent = '✅ Connexion réussie : ' + data.message;
+        state.scriptUrl = url;
+        saveStorage();
+      } else throw new Error(data.error || 'Erreur inconnue');
+    } catch(e) {
+      result.classList.add('ko');
+      result.textContent = '❌ Impossible : ' + e.message;
+    }
+  },
+  showAppsScriptCode() {
+    document.getElementById('apps-script-code').textContent = APPS_SCRIPT_CODE;
+    document.getElementById('apps-script-modal').classList.add('open');
+  },
+  hideAppsScriptCode() {
+    document.getElementById('apps-script-modal').classList.remove('open');
+  },
+  copyAppsScriptCode() {
+    navigator.clipboard.writeText(APPS_SCRIPT_CODE).then(()=>toast('📋 Code copié !', 'success'));
+  },
+};
+
+// ─── NAVIGATION ───────────────────────────────────────────────
+const SCREENS = ['config','theme','tirage','question','bilan'];
+function goTo(name) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  document.querySelectorAll('.step').forEach((s,i)=>{
+    s.classList.remove('active','done');
+    if (i === SCREENS.indexOf(name)) s.classList.add('active');
+    else if (i < SCREENS.indexOf(name)) s.classList.add('done');
+  });
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function goToTheme() {
+  if (!state.currentClasse) { toast('Choisis ou importe une classe', 'error'); return; }
+  // Capture config
+  state.config.niveau = document.getElementById('sel-niveau').value;
+  state.config.nbEleves = parseInt(document.getElementById('sel-nb-eleves').value);
+  state.config.nbQuestions = parseInt(document.getElementById('sel-nb-questions').value);
+  state.config.mode = document.getElementById('sel-mode').value;
+  state.config.timer = parseInt(document.getElementById('sel-timer').value);
+  state.config.objectif = parseInt(document.getElementById('sel-objectif').value);
+  saveStorage();
+  filterThemes(currentFilter, null);
+  goTo('theme');
+}
+
+function goToTirage() {
+  if (!state.selectedTheme) { toast('Choisis un thème', 'error'); return; }
+  goTo('tirage');
+  setupTirage();
+}
+
+// ─── THEMES ───────────────────────────────────────────────
+let currentFilter = 'all';
+
+function getAllThemes() {
+  const all = {};
+  Object.keys(QUESTIONS_DATA).forEach(t => all[t] = {questions:QUESTIONS_DATA[t], custom:false});
+  Object.keys(state.customThemes).forEach(t => {
+    if (all[t]) all[t].questions = all[t].questions.concat(state.customThemes[t]);
+    else all[t] = {questions:state.customThemes[t], custom:true};
+  });
+  return all;
+}
+
+function getCycle(themeName) {
+  if (CYCLES.cycle3.includes(themeName)) return 'cycle3';
+  if (CYCLES.cycle4.includes(themeName)) return 'cycle4';
+  if (CYCLES.extra.includes(themeName)) return 'extra';
+  return 'custom';
+}
+
+function filterThemes(cycle, btn) {
+  currentFilter = cycle;
+  document.querySelectorAll('#themes-filter button').forEach(b=>b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  else document.querySelector(`#themes-filter button[data-cycle="${cycle}"]`)?.classList.add('active');
+  const all = getAllThemes();
+  const grid = document.getElementById('themes-grid');
+  const themes = Object.keys(all).filter(t => {
+    if (cycle === 'all') return true;
+    if (cycle === 'custom') return all[t].custom || Object.keys(state.customThemes).includes(t);
+    return getCycle(t) === cycle;
+  });
+  if (themes.length === 0) {
+    grid.innerHTML = '<div style="color:var(--muted);padding:1rem;text-align:center;grid-column:1/-1">Aucun thème dans cette catégorie</div>';
+    return;
+  }
+  grid.innerHTML = themes.map(t => {
+    const c = getCycle(t);
+    const cycleLabel = c==='cycle3'?'C3':c==='cycle4'?'C4':c==='extra'?'+':'PERSO';
+    const customBadge = (Object.keys(state.customThemes).includes(t) && c!=='custom') ? '<span class="tc-custom">+ perso</span>' : (c==='custom'?'<span class="tc-custom">PERSO</span>':'');
+    return `<div class="theme-card ${state.selectedTheme===t?'selected':''}" onclick="App.selectTheme('${t.replace(/'/g,"\\'")}')">
+      <div><span class="tc-cycle">${cycleLabel}</span>${customBadge}</div>
+      <div class="tc-name">${t}</div>
+      <div class="tc-meta">${all[t].questions.length} questions</div>
+    </div>`;
+  }).join('');
+  updateAvailable();
+}
+
+function selectTheme(t) {
+  state.selectedTheme = t;
+  filterThemes(currentFilter, null);
+  updateAvailable();
+}
+
+function setDiff(btn) {
+  state.selectedDiff = btn.dataset.diff;
+  document.querySelectorAll('.diff-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  updateAvailable();
+}
+
+function updateAvailable() {
+  const el = document.getElementById('questions-available');
+  if (!state.selectedTheme) { el.textContent = '— Choisis un thème —'; return; }
+  const all = getAllThemes();
+  const qs = all[state.selectedTheme]?.questions || [];
+  const filtered = state.selectedDiff === 'all' ? qs : qs.filter(q => q.d === state.selectedDiff);
+  el.textContent = `${filtered.length} questions disponibles dans ce thème (${state.selectedDiff==='all'?'tous niveaux':state.selectedDiff})`;
+}
+
+// ─── TIRAGE / SLOT MACHINE ───────────────────────────────────────────────
+let pickedEleves = [];
+
+function setupTirage() {
+  pickedEleves = [];
+  const c = state.classes[state.currentClasse];
+  const tags = [
+    `📚 ${c.nom}`,
+    `🎯 ${state.selectedTheme}`,
+    `🎚 ${state.selectedDiff==='all'?'Mixte':state.selectedDiff}`,
+    `👥 ${state.config.nbEleves} élèves`,
+    `❓ ${state.config.nbQuestions} questions`,
+  ];
+  document.getElementById('config-tags').innerHTML = tags.map(t=>`<div class="cfg-tag">${t}</div>`).join('');
+  // Affiche les slots vides
+  const area = document.getElementById('slot-area');
+  area.innerHTML = '';
+  for (let i=0; i<state.config.nbEleves; i++) {
+    area.innerHTML += `<div class="slot" id="slot-${i}">
+      <div class="slot-num">${i+1}</div>
+      <div class="slot-name" id="slot-name-${i}">—</div>
+    </div>`;
+  }
+  document.getElementById('btn-spin').textContent = '🎲 Lancer le tirage';
+  document.getElementById('btn-spin').disabled = false;
+  document.getElementById('btn-start-questions').disabled = true;
+  document.getElementById('equity-info').textContent = '';
+}
+
+const slotMachine = {
+  spinning: false,
+  toggle() {
+    if (this.spinning) return;
+    this.spin();
+  },
+  spin() {
+    this.spinning = true;
+    const c = state.classes[state.currentClasse];
+    const nb = state.config.nbEleves;
+    document.getElementById('btn-spin').disabled = true;
+
+    // Algorithme d'équité : trier par nb questions (asc), puis aléatoire dans les moins interrogés
+    const sorted = c.eleves.slice().sort((a,b) => {
+      const an = c.stats[a.code]?.nb || 0;
+      const bn = c.stats[b.code]?.nb || 0;
+      return an - bn;
+    });
+    // Prendre 2 fois le nombre nécessaire dans les "moins interrogés", puis randomiser
+    const pool = sorted.slice(0, Math.min(nb*3, sorted.length));
+    pickedEleves = [];
+    const used = new Set();
+    while (pickedEleves.length < nb && used.size < pool.length) {
+      const idx = Math.floor(Math.random() * pool.length);
+      if (!used.has(idx)) {
+        used.add(idx);
+        pickedEleves.push(pool[idx]);
+      }
+    }
+
+    // Animation
+    for (let i=0; i<nb; i++) {
+      const slot = document.getElementById(`slot-${i}`);
+      const nameEl = document.getElementById(`slot-name-${i}`);
+      slot.classList.add('spinning');
+      slot.classList.remove('locked');
+      let counter = 0;
+      const total = 12 + i*4;
+      const interval = setInterval(() => {
+        const r = c.eleves[Math.floor(Math.random()*c.eleves.length)];
+        nameEl.textContent = r.prenom;
+        counter++;
+        playSlot(i);
+        if (counter >= total) {
+          clearInterval(interval);
+          nameEl.textContent = pickedEleves[i].prenom;
+          slot.classList.remove('spinning');
+          slot.classList.add('locked');
+          if (i === nb-1) {
+            this.spinning = false;
+            document.getElementById('btn-start-questions').disabled = false;
+            document.getElementById('btn-spin').textContent = '🔄 Relancer';
+            document.getElementById('btn-spin').disabled = false;
+            playWin();
+            // Affiche info équité
+            const minQ = Math.min(...c.eleves.map(e => c.stats[e.code]?.nb || 0));
+            const maxQ = Math.max(...c.eleves.map(e => c.stats[e.code]?.nb || 0));
+            document.getElementById('equity-info').innerHTML = `📊 Équité : moins interrogés tirés en priorité — Min: ${minQ}Q / Max: ${maxQ}Q`;
+          }
+        }
+      }, 80);
+    }
+  }
+};
+
+// ─── QUESTIONS / SESSION ───────────────────────────────────────────────
+function startQuestions() {
+  if (!pickedEleves.length) return;
+  // Construire la session
+  const all = getAllThemes();
+  const themeQs = all[state.selectedTheme]?.questions || [];
+  const filtered = state.selectedDiff === 'all' ? themeQs : themeQs.filter(q => q.d === state.selectedDiff);
+  if (filtered.length === 0) { toast('Aucune question dans ce niveau', 'error'); return; }
+
+  // Shuffle questions
+  const pool = [...filtered].sort(()=>Math.random()-0.5);
+
+  state.session = {
+    classe: state.currentClasse,
+    theme: state.selectedTheme,
+    diff: state.selectedDiff,
+    eleves: pickedEleves.map(e => ({
+      ...e,
+      questions: [],
+      scores: [],
+    })),
+    startedAt: Date.now(),
+  };
+
+  // Distribuer les questions
+  const totalNeeded = pickedEleves.length * state.config.nbQuestions;
+  const distributed = [];
+  for (let i=0; i<totalNeeded; i++) {
+    distributed.push(pool[i % pool.length]);
+  }
+  state.session.eleves.forEach((e,i) => {
+    for (let q=0; q<state.config.nbQuestions; q++) {
+      e.questions.push(distributed[i*state.config.nbQuestions + q]);
+    }
+  });
+
+  state.questionIdx = 0;
+  goTo('question');
+  loadCurrentQuestion();
+}
+
+function getCurrentEleveAndQ() {
+  const total = state.config.nbQuestions;
+  const eIdx = Math.floor(state.questionIdx / total);
+  const qIdx = state.questionIdx % total;
+  return {eleve: state.session.eleves[eIdx], qIdx, eIdx};
+}
+
+function loadCurrentQuestion() {
+  const {eleve, qIdx, eIdx} = getCurrentEleveAndQ();
+  if (!eleve) { endSession(); return; }
+  const q = eleve.questions[qIdx];
+  document.getElementById('q-eleve-name').textContent = eleve.prenom;
+  document.getElementById('q-counter').textContent = `Élève ${eIdx+1}/${state.session.eleves.length} · Question ${qIdx+1}/${state.config.nbQuestions}`;
+  document.getElementById('q-theme-badge').textContent = state.session.theme;
+  const dBadge = document.getElementById('q-diff-badge');
+  dBadge.className = 'diff-badge ' + q.d;
+  dBadge.textContent = q.d.charAt(0).toUpperCase() + q.d.slice(1);
+  const pts = POINTS[q.d];
+  document.getElementById('q-pts-badge').textContent = pts + ' pts max';
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('answer-text').textContent = q.r;
+  document.getElementById('answer-box').classList.add('hidden');
+  document.getElementById('score-eleve-name').textContent = eleve.prenom;
+  document.getElementById('score-pts-max').textContent = pts;
+  document.getElementById('score-pts-display').textContent = '/' + pts;
+  document.getElementById('score-input').value = '';
+  document.getElementById('score-input').max = pts;
+  state.currentScore = null;
+  document.querySelectorAll('.score-btn').forEach(b=>b.classList.remove('selected'));
+  document.getElementById('btn-validate-score').disabled = false;
+  // Timer
+  if (state.config.timer > 0) {
+    document.getElementById('timer-container').classList.remove('hidden');
+    timer.start(state.config.timer);
+  } else {
+    document.getElementById('timer-container').classList.add('hidden');
+  }
+}
+
+function showAnswer() {
+  document.getElementById('answer-box').classList.remove('hidden');
+}
+
+function nextQuestion() {
+  timer.stop();
+  state.questionIdx++;
+  if (state.questionIdx >= state.session.eleves.length * state.config.nbQuestions) {
+    endSession();
+  } else {
+    loadCurrentQuestion();
+  }
+}
+
+function setScore(val) {
+  state.currentScore = val;
+  document.querySelectorAll('.score-btn').forEach(b=>b.classList.remove('selected'));
+  document.querySelector('.score-btn.zero').classList.add('selected');
+  document.getElementById('score-input').value = val;
+  playScore('zero');
+}
+
+function setScoreHalf() {
+  const {eleve, qIdx} = getCurrentEleveAndQ();
+  const q = eleve.questions[qIdx];
+  state.currentScore = POINTS[q.d] / 2;
+  document.querySelectorAll('.score-btn').forEach(b=>b.classList.remove('selected'));
+  document.querySelector('.score-btn.half').classList.add('selected');
+  document.getElementById('score-input').value = state.currentScore;
+  playScore('half');
+}
+
+function setScoreMax() {
+  const {eleve, qIdx} = getCurrentEleveAndQ();
+  const q = eleve.questions[qIdx];
+  state.currentScore = POINTS[q.d];
+  document.querySelectorAll('.score-btn').forEach(b=>b.classList.remove('selected'));
+  document.querySelector('.score-btn.max').classList.add('selected');
+  document.getElementById('score-input').value = state.currentScore;
+  playScore('max');
+}
+
+function setScoreManual(v) {
+  const val = parseFloat(v);
+  if (isNaN(val)) { state.currentScore = null; return; }
+  state.currentScore = val;
+  document.querySelectorAll('.score-btn').forEach(b=>b.classList.remove('selected'));
+}
+
+function validateScore() {
+  if (state.currentScore === null) { toast('Choisis une note', 'error'); return; }
+  const {eleve, qIdx} = getCurrentEleveAndQ();
+  const q = eleve.questions[qIdx];
+  const ptsMax = POINTS[q.d];
+  // Update session
+  eleve.scores.push({
+    pts: state.currentScore,
+    pts_max: ptsMax,
+    diff: q.d,
+    q: q.q,
+  });
+  // Update class stats
+  const c = state.classes[state.currentClasse];
+  if (!c.stats[eleve.code]) c.stats[eleve.code] = {nb:0, pts:0, max:0, sessions:[]};
+  c.stats[eleve.code].nb++;
+  c.stats[eleve.code].pts += state.currentScore;
+  c.stats[eleve.code].max += ptsMax;
+  saveStorage();
+  nextQuestion();
+}
+
+// ─── TIMER ───────────────────────────────────────────────
+const timer = {
+  start(seconds) {
+    this.stop();
+    state.timerRemaining = seconds;
+    state.timerPaused = false;
+    this.update();
+    state.timerInterval = setInterval(() => {
+      if (state.timerPaused) return;
+      state.timerRemaining--;
+      this.update();
+      if (state.timerRemaining <= 5 && state.timerRemaining > 0) playTone(880,'sine',0.1,0.2);
+      if (state.timerRemaining <= 0) {
+        this.stop();
+        playTone(220,'square',0.5,0.3);
+        toast('⏰ Temps écoulé !', 'info');
+      }
+    }, 1000);
+  },
+  stop() {
+    if (state.timerInterval) clearInterval(state.timerInterval);
+    state.timerInterval = null;
+  },
+  toggle() {
+    state.timerPaused = !state.timerPaused;
+    toast(state.timerPaused ? '⏸ Pause' : '▶ Reprise', 'info');
+  },
+  update() {
+    const total = state.config.timer;
+    const pct = Math.max(0, (state.timerRemaining / total) * 100);
+    const bar = document.getElementById('timer-bar');
+    bar.style.width = pct + '%';
+    bar.className = 'timer-bar';
+    if (pct < 30) bar.classList.add('danger');
+    else if (pct < 60) bar.classList.add('warning');
+    document.getElementById('timer-text').textContent = state.timerRemaining + 's';
+  },
+};
+
+// ─── BILAN ───────────────────────────────────────────────
+function endSession() {
+  timer.stop();
+  goTo('bilan');
+  renderBilan();
+  // Sync GAS si configuré
+  if (state.scriptUrl && state.session) {
+    saveSessionToGAS();
+  }
+}
+
+function renderBilan() {
+  const c = state.classes[state.currentClasse];
+  if (!state.session) return;
+  // Stats session
+  const sess = state.session;
+  let totalQ = 0, totalPts = 0, totalMax = 0;
+  sess.eleves.forEach(e => {
+    e.scores.forEach(s => {
+      totalQ++;
+      totalPts += s.pts;
+      totalMax += s.pts_max;
+    });
+  });
+  const avg = totalMax > 0 ? (totalPts / totalMax * 20).toFixed(1) : '—';
+  document.getElementById('bilan-stats').innerHTML = `
+    <div class="stat-card"><div class="stat-value">${sess.eleves.length}</div><div class="stat-label">Élèves</div></div>
+    <div class="stat-card"><div class="stat-value">${totalQ}</div><div class="stat-label">Questions</div></div>
+    <div class="stat-card"><div class="stat-value">${totalPts}/${totalMax}</div><div class="stat-label">Points</div></div>
+    <div class="stat-card"><div class="stat-value">${avg}/20</div><div class="stat-label">Moyenne</div></div>
+  `;
+  // Tableau classe
+  document.getElementById('bilan-classe-nom').textContent = c.nom;
+  const tbody = document.getElementById('bilan-tbody');
+  const obj = state.config.objectif;
+  tbody.innerHTML = c.eleves.map(e => {
+    const st = c.stats[e.code] || {nb:0, pts:0, max:0};
+    const pct = Math.min(100, (st.nb / obj) * 100);
+    const note = st.max > 0 ? (st.pts / st.max * 20).toFixed(1) : '—';
+    let pcls = pct < 30 ? 'low' : (pct < 100 ? 'med' : '');
+    let dot = pct < 30 ? 'red' : (pct < 100 ? 'orange' : 'green');
+    return `<tr>
+      <td><strong>${e.prenom}</strong> ${e.nom}</td>
+      <td>${st.nb}/${obj}</td>
+      <td><div class="progress-bar-bg"><div class="progress-bar ${pcls}" style="width:${pct}%"></div></div></td>
+      <td>${note}/20</td>
+      <td><span class="dot ${dot}"></span></td>
+    </tr>`;
+  }).join('');
+}
+
+async function saveSessionToGAS() {
+  if (!state.scriptUrl || !state.session) return;
+  const c = state.classes[state.currentClasse];
+  const results = [];
+  state.session.eleves.forEach(e => {
+    e.scores.forEach(s => {
+      results.push({
+        code: e.code,
+        classe: c.nom,
+        theme: state.session.theme,
+        difficulte: s.diff,
+        note: s.pts,
+        note_max: s.pts_max,
+      });
+    });
+  });
+  try {
+    const r = await gasCall('save_session', {results});
+    if (r.ok) toast(`☁️ ${r.saved} résultats sauvegardés dans Google Sheet`, 'success');
+  } catch(e) {
+    toast('⚠️ Sauvegarde Google Sheet échouée', 'error');
+  }
+}
+
+function exportCSV() {
+  if (!state.session) return;
+  const c = state.classes[state.currentClasse];
+  let csv = '\ufeffPrénom;NOM;Code;Thème;Difficulté;Question;Note;Note max\n';
+  state.session.eleves.forEach(e => {
+    e.scores.forEach(s => {
+      csv += `${e.prenom};${e.nom};${e.code};${state.session.theme};${s.diff};"${s.q.replace(/"/g,'""')}";${s.pts};${s.pts_max}\n`;
+    });
+  });
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `eduroulette_${c.nom}_${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+  toast('📥 Export CSV téléchargé', 'success');
+}
+
+function nouvelleSession() {
+  state.session = null;
+  state.questionIdx = 0;
+  goTo('config');
+}
+
+function generateGoogleForm() {
+  if (!state.session) return;
+  const all = getAllThemes();
+  const themeQs = all[state.session.theme]?.questions || [];
+  const qs = themeQs.slice(0, 20).map(q => q.q);
+  const code = `function createForm() {
+  const f = FormApp.create("EduRoulette - ${state.session.theme.replace(/"/g,'\\"')}");
+  f.setDescription("Classe : ${state.classes[state.currentClasse].nom}");
+  ${qs.map(q => `f.addTextItem().setTitle(${JSON.stringify(q)}).setRequired(true);`).join('\n  ')}
+  Logger.log("URL: " + f.getPublishedUrl());
+}`;
+  navigator.clipboard.writeText(code);
+  toast('📋 Code Apps Script copié — colle-le dans script.google.com', 'success');
+}
+
+// ─── CODES ÉLÈVES ───────────────────────────────────────────────
+const codes = {
+  show() {
+    if (!state.currentClasse) { toast('Aucune classe active', 'error'); return; }
+    const c = state.classes[state.currentClasse];
+    document.getElementById('codes-classe-nom').textContent = c.nom;
+    const eleveUrl = window.location.href.replace(/index\.html$|\/$/,'') + '/eleve.html';
+    document.getElementById('print-url').textContent = eleveUrl;
+    const list = document.getElementById('codes-list');
+    list.innerHTML = c.eleves.map(e => `
+      <div class="code-card">
+        <div class="cc-name">${e.prenom} ${e.nom}</div>
+        <div class="cc-code">${e.code}</div>
+        <div class="cc-qr" id="qr-${e.code}"></div>
+      </div>
+    `).join('');
+    // Generate QR codes
+    setTimeout(()=>{
+      c.eleves.forEach(e => {
+        const div = document.getElementById(`qr-${e.code}`);
+        if (div) {
+          new QRCode(div, {
+            text: eleveUrl + '?code=' + e.code,
+            width:90, height:90, correctLevel: QRCode.CorrectLevel.M
+          });
+        }
+      });
+    }, 50);
+    document.getElementById('codes-modal').classList.add('open');
+  },
+  hide() {
+    document.getElementById('codes-modal').classList.remove('open');
+  },
+  print() { window.print(); },
+  exportCSV() {
+    if (!state.currentClasse) return;
+    const c = state.classes[state.currentClasse];
+    let csv = '\ufeffPrénom;NOM;Code\n';
+    c.eleves.forEach(e => csv += `${e.prenom};${e.nom};${e.code}\n`);
+    const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `codes_${c.nom}.csv`;
+    a.click();
+    toast('📥 Codes exportés', 'success');
+  },
+  syncToGAS() {
+    if (!state.scriptUrl) { toast('Configure d\'abord l\'URL Google Apps Script', 'error'); return; }
+    syncClasseToGAS(state.currentClasse);
+  },
+};
+
+// ─── ÉDITEUR THÈMES & QUESTIONS ───────────────────────────────────────────────
+let editorTab = 'themes';
+const editor = {
+  open() { document.getElementById('editor-modal').classList.add('open'); this.renderThemes(); this.renderTargetSelect(); this.switchTab('themes', document.querySelector('.editor-tab[data-etab="themes"]')); },
+  close() { document.getElementById('editor-modal').classList.remove('open'); },
+  switchTab(t, btn) {
+    editorTab = t;
+    document.querySelectorAll('.editor-tab').forEach(b=>b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    ['themes','questions','add'].forEach(name => {
+      document.getElementById('editor-panel-'+name).style.display = (name===t) ? 'block' : 'none';
+    });
+    document.getElementById('editor-save-btn').style.display = (t==='add') ? 'inline-flex' : 'none';
+    if (t === 'questions') { this.renderThemeSelect(); this.renderQuestions(); }
+    if (t === 'add') { this.toggleAddType(); }
+  },
+  renderThemes() {
+    const list = document.getElementById('editor-themes-list');
+    const all = getAllThemes();
+    list.innerHTML = Object.keys(all).map(t => {
+      const isCustom = Object.keys(state.customThemes).includes(t);
+      const cycle = getCycle(t);
+      const cycleLabel = cycle==='cycle3'?'C3':cycle==='cycle4'?'C4':cycle==='extra'?'Extra':'Perso';
+      return `<div class="editor-item">
+        <div class="ei-info">
+          <div class="ei-title">${t}</div>
+          <div class="ei-meta">${cycleLabel} · ${all[t].questions.length} questions ${isCustom?'· (avec ajouts perso)':''}</div>
+        </div>
+        <div class="ei-acts">
+          ${isCustom ? `<button class="btn-small danger" onclick="App.editor.deleteCustomTheme('${t.replace(/'/g,"\\'")}')">🗑</button>` : '<span style="color:var(--muted);font-size:.7rem">officiel</span>'}
+        </div>
+      </div>`;
+    }).join('');
+  },
+  renderThemeSelect() {
+    const sel = document.getElementById('editor-theme-select');
+    const all = getAllThemes();
+    sel.innerHTML = Object.keys(all).map(t => `<option value="${t}">${t} (${all[t].questions.length})</option>`).join('');
+  },
+  renderTargetSelect() {
+    const sel = document.getElementById('editor-target-select');
+    const all = getAllThemes();
+    sel.innerHTML = Object.keys(all).map(t => `<option value="${t}">${t}</option>`).join('');
+  },
+  renderQuestions() {
+    const t = document.getElementById('editor-theme-select').value;
+    const all = getAllThemes();
+    const qs = all[t]?.questions || [];
+    const list = document.getElementById('editor-questions-list');
+    list.innerHTML = qs.map((q, idx) => {
+      const isCustomQ = (state.customThemes[t] || []).includes(q);
+      return `<div class="editor-item">
+        <div class="ei-info">
+          <div class="ei-title">${q.q.substring(0,90)}${q.q.length>90?'...':''}</div>
+          <div class="ei-meta">${q.d} · ${POINTS[q.d]} pts ${isCustomQ?'· perso':''}</div>
+        </div>
+        <div class="ei-acts">
+          ${isCustomQ ? `<button class="btn-small danger" onclick="App.editor.deleteCustomQuestion('${t.replace(/'/g,"\\'")}',${(state.customThemes[t]||[]).indexOf(q)})">🗑</button>` : '<span style="color:var(--muted);font-size:.7rem">officielle</span>'}
+        </div>
+      </div>`;
+    }).join('');
+  },
+  toggleAddType() {
+    const type = document.getElementById('editor-add-type').value;
+    document.getElementById('editor-theme-target').style.display = (type === 'question') ? 'block' : 'none';
+    document.getElementById('editor-new-theme-fields').style.display = (type === 'theme') ? 'block' : 'none';
+  },
+  save() {
+    const type = document.getElementById('editor-add-type').value;
+    const q = document.getElementById('editor-new-question').value.trim();
+    const r = document.getElementById('editor-new-answer').value.trim();
+    const d = document.getElementById('editor-new-diff').value;
+    if (!q || !r) { toast('Question et réponse obligatoires', 'error'); return; }
+    let theme;
+    if (type === 'theme') {
+      theme = document.getElementById('editor-new-theme-name').value.trim();
+      if (!theme) { toast('Nom du thème obligatoire', 'error'); return; }
+    } else {
+      theme = document.getElementById('editor-target-select').value;
+    }
+    if (!state.customThemes[theme]) state.customThemes[theme] = [];
+    state.customThemes[theme].push({q, r, d});
+    saveStorage();
+    toast(`✅ Question ajoutée à "${theme}"`, 'success');
+    document.getElementById('editor-new-question').value = '';
+    document.getElementById('editor-new-answer').value = '';
+    document.getElementById('editor-new-theme-name').value = '';
+    this.renderThemes();
+    this.renderTargetSelect();
+  },
+  deleteCustomTheme(t) {
+    if (!confirm(`Supprimer toutes les questions perso de "${t}" ?`)) return;
+    delete state.customThemes[t];
+    saveStorage();
+    toast('🗑 Thème perso supprimé', 'info');
+    this.renderThemes();
+  },
+  deleteCustomQuestion(t, idx) {
+    if (!confirm('Supprimer cette question ?')) return;
+    if (state.customThemes[t]) state.customThemes[t].splice(idx, 1);
+    if (state.customThemes[t]?.length === 0) delete state.customThemes[t];
+    saveStorage();
+    toast('🗑 Question supprimée', 'info');
+    this.renderQuestions();
+    this.renderThemes();
+  },
+};
+
+// ─── STORAGE / RESET ───────────────────────────────────────────────
+const storage = {
+  resetConfirm() {
+    if (confirm('⚠️ Cela effacera TOUTES les données (classes, stats, thèmes perso). Continuer ?')) {
+      localStorage.removeItem(STORAGE_KEY);
+      location.reload();
+    }
+  },
+};
+
+// ─── MUTE ───────────────────────────────────────────────
+function toggleMute() {
+  state.muted = !state.muted;
+  saveStorage();
+  document.getElementById('btn-mute').textContent = state.muted ? '🔇' : '🔊';
+}
+
+// ─── INIT ───────────────────────────────────────────────
+function init() {
+  loadStorage();
+  // Restore config
+  if (state.config) {
+    document.getElementById('sel-niveau').value = state.config.niveau || '4eme';
+    document.getElementById('sel-nb-eleves').value = state.config.nbEleves || 3;
+    document.getElementById('sel-nb-questions').value = state.config.nbQuestions || 2;
+    document.getElementById('sel-mode').value = state.config.mode || 'individuel';
+    document.getElementById('sel-timer').value = state.config.timer || 30;
+    document.getElementById('sel-objectif').value = state.config.objectif || 18;
+    document.getElementById('obj-display').textContent = (state.config.objectif||18) + ' questions minimum';
+  }
+  if (state.scriptUrl) document.getElementById('script-url-input').value = state.scriptUrl;
+  if (state.muted) document.getElementById('btn-mute').textContent = '🔇';
+
+  renderClasses();
+
+  // Drop zone
+  const dz = document.getElementById('drop-zone');
+  const fi = document.getElementById('file-input');
+  dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
+  dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+  dz.addEventListener('drop', e => {
+    e.preventDefault();
+    dz.classList.remove('drag-over');
+    if (e.dataTransfer.files[0]) handleCSVFile(e.dataTransfer.files[0]);
+  });
+  fi.addEventListener('change', e => { if (e.target.files[0]) handleCSVFile(e.target.files[0]); });
+
+  // Add type change
+  document.getElementById('editor-add-type').addEventListener('change', () => editor.toggleAddType());
+
+  // Objectif update
+  document.getElementById('sel-objectif').addEventListener('change', e => {
+    document.getElementById('obj-display').textContent = e.target.value + ' questions minimum';
+  });
+
+  // Auto-load code from URL (eleve mode)
+  const params = new URLSearchParams(location.search);
+  if (params.get('code')) toast(`Code détecté : ${params.get('code')} — utilise eleve.html`, 'info');
+}
+
+document.addEventListener('DOMContentLoaded', init);
+
+// ─── EXPORT ───────────────────────────────────────────────
+return {
+  goTo, goToTheme, goToTirage, startQuestions,
+  selectTheme, filterThemes, setDiff,
+  confirmClasse, selectClasse, showClasseList, toggleElevesList,
+  addAnotherClasse, deleteCurrentClasse,
+  showAnswer, nextQuestion, setScore, setScoreHalf, setScoreMax, setScoreManual, validateScore,
+  exportCSV, nouvelleSession, generateGoogleForm,
+  slotMachine, timer, settings, codes, editor, storage,
+  toggleMute,
+};
+})();
+
+
+</script>
+</body>
+</html>

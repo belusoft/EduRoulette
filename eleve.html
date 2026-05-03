@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎰 Mon EduRoulette — Mes notes</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0C0C1E;--bg2:#13132B;--bg3:#1A1A38;--bg4:#22224A;
+  --purple:#8B5CF6;--p2:#7C3AED;--pD:rgba(139,92,246,.15);
+  --gold:#F59E0B;--g2:#D97706;--gD:rgba(245,158,11,.12);
+  --green:#10B981;--red:#EF4444;--orange:#F97316;--cyan:#06B6D4;
+  --text:#F1F5F9;--dim:rgba(241,245,249,.55);--muted:rgba(241,245,249,.22);
+  --border:rgba(255,255,255,.07);--card:rgba(255,255,255,.04);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;min-height:100vh;padding:1.5rem 1rem}
+.neon-brand{position:fixed;top:10px;right:14px;z-index:9999;font-family:'Bebas Neue',sans-serif;font-size:.8rem;letter-spacing:2px;pointer-events:none;animation:neon 4s linear infinite}
+@keyframes neon{
+  0%,100%{color:#ff00ff;text-shadow:0 0 6px #ff00ff,0 0 14px #ff00ff}
+  25%{color:#00ff88;text-shadow:0 0 6px #00ff88,0 0 14px #00ff88}
+  50%{color:#00cfff;text-shadow:0 0 6px #00cfff,0 0 14px #00cfff}
+  75%{color:#8b5cf6;text-shadow:0 0 6px #8b5cf6,0 0 14px #8b5cf6}
+}
+
+.container{max-width:720px;margin:0 auto}
+.header{text-align:center;margin-bottom:1.6rem}
+.logo{font-size:3.2rem;filter:drop-shadow(0 0 24px var(--gold));margin-bottom:.4rem}
+.title{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:3px;background:linear-gradient(135deg,var(--purple),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.subtitle{color:var(--dim);font-size:.85rem;margin-top:.3rem}
+
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:1.6rem;margin-bottom:1.1rem;box-shadow:0 2px 16px rgba(0,0,0,.18)}
+.card h2{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:1.5px;color:var(--purple);margin-bottom:.8rem}
+
+label{display:block;font-size:.72rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--dim);margin-bottom:.35rem}
+input{background:var(--bg3);border:1.5px solid var(--border);border-radius:9px;color:var(--text);padding:.85rem 1rem;font-family:'Nunito',sans-serif;font-size:1.05rem;font-weight:700;width:100%;text-align:center;letter-spacing:2px;text-transform:uppercase}
+input:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 3px rgba(139,92,246,.3)}
+
+.btn{background:linear-gradient(135deg,var(--purple),var(--p2));color:#fff;padding:.95rem 1.6rem;font-size:.95rem;font-weight:800;border-radius:11px;border:none;cursor:pointer;width:100%;margin-top:.7rem;transition:all .2s;font-family:'Nunito',sans-serif}
+.btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 6px 24px rgba(139,92,246,.4)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn-secondary{background:var(--card);color:var(--text);border:1px solid var(--border);padding:.65rem 1rem;font-size:.85rem;font-weight:700;border-radius:9px;cursor:pointer;font-family:'Nunito',sans-serif;width:auto;margin:.3rem .3rem 0 0}
+
+.error{padding:.8rem 1rem;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:9px;color:var(--red);font-size:.85rem;font-weight:700;margin-top:.6rem}
+.loading{text-align:center;padding:2rem;color:var(--dim)}
+.loading::after{content:'';display:inline-block;width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--purple);border-radius:50%;margin-left:.5rem;animation:spin .8s linear infinite;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.eleve-info{display:flex;align-items:center;gap:.9rem;padding:.9rem 1.2rem;background:linear-gradient(135deg,rgba(139,92,246,.08),rgba(245,158,11,.05));border:1px solid var(--border);border-radius:13px;margin-bottom:1rem}
+.eleve-avatar{font-size:2.2rem}
+.eleve-name{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:2px;color:var(--gold)}
+.eleve-meta{font-size:.78rem;color:var(--dim)}
+
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.7rem;margin-bottom:1rem}
+.stat{background:var(--bg3);border:1px solid var(--border);border-radius:11px;padding:1rem;text-align:center}
+.stat-val{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--gold);letter-spacing:1px;line-height:1}
+.stat-lbl{font-size:.7rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin-top:.25rem}
+
+.progress-section{margin-top:1.2rem}
+.progress-section h3{font-size:.85rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:.4rem}
+.progress-bar-bg{width:100%;height:22px;background:var(--bg3);border-radius:11px;overflow:hidden;position:relative}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--green),var(--gold));border-radius:11px;transition:width .5s;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;color:#fff;font-size:.72rem;font-weight:800}
+
+.session-list{display:flex;flex-direction:column;gap:.5rem;max-height:400px;overflow-y:auto}
+.session-item{display:flex;align-items:center;gap:.8rem;padding:.7rem .9rem;background:var(--bg3);border:1px solid var(--border);border-radius:10px}
+.session-icon{font-size:1.3rem;flex-shrink:0}
+.session-info{flex:1;min-width:0}
+.session-theme{font-weight:800;font-size:.85rem}
+.session-meta{font-size:.7rem;color:var(--dim);margin-top:.1rem}
+.session-score{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:1px;flex-shrink:0;padding:.3rem .7rem;border-radius:7px}
+.session-score.high{color:var(--green);background:rgba(16,185,129,.1)}
+.session-score.med{color:var(--orange);background:rgba(249,115,22,.1)}
+.session-score.low{color:var(--red);background:rgba(239,68,68,.1)}
+
+.empty-state{text-align:center;padding:1.5rem;color:var(--dim);font-size:.88rem}
+
+.config-row{display:flex;gap:.5rem;margin-top:.6rem}
+.config-row input{flex:1}
+
+@media(max-width:540px){
+  .title{font-size:1.7rem}
+  .logo{font-size:2.6rem}
+  .card{padding:1.2rem}
+  .eleve-name{font-size:1.3rem}
+  .eleve-avatar{font-size:1.8rem}
+  .stat-val{font-size:1.6rem}
+}
+</style>
+</head>
+<body>
+<div class="neon-brand">✦ BeluSoft-Tchapy ✦</div>
+<div class="container">
+
+  <div class="header">
+    <div class="logo">🎰</div>
+    <div class="title">MES NOTES EDUROULETTE</div>
+    <div class="subtitle">Consulte tes résultats — Technologie</div>
+  </div>
+
+  <!-- Connexion -->
+  <div class="card" id="login-card">
+    <h2>🔑 Connexion élève</h2>
+    <p style="color:var(--dim);font-size:.85rem;margin-bottom:.8rem">Tape ton code personnel (donné par ton professeur).</p>
+    <label>Mon code</label>
+    <input type="text" id="code-input" placeholder="Ex : 3EME1-001" autocomplete="off">
+    <button class="btn" id="btn-login" onclick="login()">Voir mes notes →</button>
+    <div id="login-error" class="error" style="display:none"></div>
+
+    <details style="margin-top:1.5rem;font-size:.78rem;color:var(--dim)">
+      <summary style="cursor:pointer;font-weight:700">⚙️ Configurer la connexion (1ère fois)</summary>
+      <div style="padding:.6rem 0">
+        <label>URL Google Apps Script</label>
+        <div class="config-row">
+          <input type="text" id="config-url" placeholder="https://script.google.com/.../exec" style="text-transform:none;letter-spacing:0;text-align:left;font-size:.78rem">
+        </div>
+        <button class="btn-secondary" onclick="saveConfig()">💾 Enregistrer</button>
+      </div>
+    </details>
+  </div>
+
+  <!-- Résultats -->
+  <div id="results-section" style="display:none">
+    <div class="card">
+      <div class="eleve-info">
+        <div class="eleve-avatar">👤</div>
+        <div style="flex:1">
+          <div class="eleve-name" id="eleve-name">—</div>
+          <div class="eleve-meta" id="eleve-classe">—</div>
+        </div>
+        <button class="btn-secondary" onclick="logout()">↩</button>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat">
+          <div class="stat-val" id="stat-nb">0</div>
+          <div class="stat-lbl">Questions</div>
+        </div>
+        <div class="stat">
+          <div class="stat-val" id="stat-pts">0</div>
+          <div class="stat-lbl">Points cumulés</div>
+        </div>
+        <div class="stat">
+          <div class="stat-val" id="stat-moy">—</div>
+          <div class="stat-lbl">Moyenne /20</div>
+        </div>
+      </div>
+
+      <div class="progress-section">
+        <h3>🎯 Objectif : 18 questions</h3>
+        <div class="progress-bar-bg">
+          <div class="progress-bar" id="progress-bar" style="width:0%">0%</div>
+        </div>
+        <div style="font-size:.76rem;color:var(--dim);margin-top:.3rem;text-align:center" id="progress-msg">—</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📝 Mes interrogations</h2>
+      <div class="session-list" id="session-list"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const STORAGE = 'eduroulette_eleve';
+let scriptUrl = '';
+
+function loadConfig() {
+  try {
+    const data = JSON.parse(localStorage.getItem(STORAGE) || '{}');
+    scriptUrl = data.scriptUrl || '';
+    if (scriptUrl) document.getElementById('config-url').value = scriptUrl;
+  } catch(e) {}
+}
+
+function saveConfig() {
+  scriptUrl = document.getElementById('config-url').value.trim();
+  localStorage.setItem(STORAGE, JSON.stringify({scriptUrl}));
+  showError('✅ URL enregistrée. Tu peux maintenant entrer ton code.');
+  setTimeout(()=>document.getElementById('login-error').style.display='none', 3000);
+}
+
+function showError(msg) {
+  const el = document.getElementById('login-error');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+async function login() {
+  const code = document.getElementById('code-input').value.trim().toUpperCase();
+  if (!code) { showError('⚠️ Tape ton code personnel'); return; }
+  if (!scriptUrl) { showError('⚠️ Configure d\'abord l\'URL Google Apps Script (en bas de page)'); return; }
+
+  const btn = document.getElementById('btn-login');
+  btn.disabled = true;
+  btn.textContent = '⏳ Recherche en cours...';
+  document.getElementById('login-error').style.display = 'none';
+
+  try {
+    const res = await fetch(scriptUrl + '?action=login&code=' + encodeURIComponent(code));
+    const data = await res.json();
+    if (!data.ok) {
+      if (data.error === 'code_not_found') showError('❌ Code introuvable — vérifie auprès de ton professeur');
+      else showError('❌ Erreur : ' + (data.error || 'inconnue'));
+      btn.disabled = false;
+      btn.textContent = 'Voir mes notes →';
+      return;
+    }
+    displayResults(data);
+  } catch(e) {
+    showError('❌ Connexion impossible — vérifie ta connexion Internet');
+    btn.disabled = false;
+    btn.textContent = 'Voir mes notes →';
+  }
+}
+
+function displayResults(data) {
+  document.getElementById('login-card').style.display = 'none';
+  document.getElementById('results-section').style.display = 'block';
+  document.getElementById('eleve-name').textContent = `${data.eleve.prenom} ${data.eleve.nom}`;
+  document.getElementById('eleve-classe').textContent = `${data.eleve.classe} · Code : ${data.eleve.code}`;
+
+  const total = data.total || {nb:0, pts:0, max:0};
+  document.getElementById('stat-nb').textContent = total.nb;
+  document.getElementById('stat-pts').textContent = total.pts + '/' + total.max;
+  const moy = total.max > 0 ? (total.pts / total.max * 20).toFixed(1) : '—';
+  document.getElementById('stat-moy').textContent = moy;
+
+  // Progression
+  const obj = 18;
+  const pct = Math.min(100, Math.round((total.nb / obj) * 100));
+  const bar = document.getElementById('progress-bar');
+  bar.style.width = pct + '%';
+  bar.textContent = pct + '%';
+  const msg = document.getElementById('progress-msg');
+  if (total.nb >= obj) msg.innerHTML = `✅ Bravo, tu as atteint l'objectif !`;
+  else if (total.nb < obj * 0.3) msg.innerHTML = `⚠️ Plus que ${obj - total.nb} questions à faire`;
+  else msg.innerHTML = `Encore ${obj - total.nb} questions pour atteindre l'objectif`;
+
+  // Sessions
+  const list = document.getElementById('session-list');
+  if (!data.sessions || data.sessions.length === 0) {
+    list.innerHTML = '<div class="empty-state">Aucune interrogation pour le moment.<br>Reviens après ton premier passage à l\'oral !</div>';
+    return;
+  }
+  list.innerHTML = data.sessions.slice().reverse().map(s => {
+    const pct = s.note_max > 0 ? (s.note / s.note_max) : 0;
+    const cls = pct >= 0.7 ? 'high' : (pct >= 0.4 ? 'med' : 'low');
+    const date = new Date(s.date).toLocaleDateString('fr-FR', {day:'2-digit', month:'short', year:'numeric'});
+    const diffIcon = s.difficulte === 'facile' ? '🟢' : (s.difficulte === 'moyen' ? '🟡' : '🔴');
+    return `<div class="session-item">
+      <div class="session-icon">${diffIcon}</div>
+      <div class="session-info">
+        <div class="session-theme">${s.theme}</div>
+        <div class="session-meta">${date} · ${s.difficulte}</div>
+      </div>
+      <div class="session-score ${cls}">${s.note}/${s.note_max}</div>
+    </div>`;
+  }).join('');
+}
+
+function logout() {
+  document.getElementById('login-card').style.display = 'block';
+  document.getElementById('results-section').style.display = 'none';
+  document.getElementById('code-input').value = '';
+  document.getElementById('btn-login').disabled = false;
+  document.getElementById('btn-login').textContent = 'Voir mes notes →';
+}
+
+// Auto-login si code en URL (depuis QR code)
+loadConfig();
+const urlCode = new URLSearchParams(location.search).get('code');
+if (urlCode) {
+  document.getElementById('code-input').value = urlCode;
+  if (scriptUrl) login();
+}
+
+document.getElementById('code-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') login();
+});
+</script>
+</body>
+</html>
