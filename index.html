@@ -6,15 +6,17 @@
 <title>🎰 EduRoulette V3 — BeluSoft-Tchapy</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <style>
 :root{
-  --bg:#0C0C1E;--bg2:#13132B;--bg3:#1A1A38;--bg4:#22224A;
-  --purple:#8B5CF6;--p2:#7C3AED;--pD:rgba(139,92,246,.15);
+  --bg:#F7F8FC;--bg2:#FFFFFF;--bg3:#F0F2F8;--bg4:#E4E8F2;
+  --purple:#8B5CF6;--p2:#7C3AED;--pD:rgba(139,92,246,.12);
   --gold:#F59E0B;--g2:#D97706;--gD:rgba(245,158,11,.12);
-  --green:#10B981;--red:#EF4444;--orange:#F97316;--cyan:#06B6D4;--yellow:#FACC15;
-  --text:#F1F5F9;--dim:rgba(241,245,249,.55);--muted:rgba(241,245,249,.22);
-  --border:rgba(255,255,255,.07);--card:rgba(255,255,255,.04);
-  --gP:rgba(139,92,246,.3);--gG:rgba(245,158,11,.3);
+  --green:#10B981;--red:#EF4444;--orange:#F97316;--cyan:#06B6D4;--yellow:#EAB308;
+  --text:#181829;--dim:rgba(24,24,41,.62);--muted:rgba(24,24,41,.3);
+  --border:rgba(15,15,35,.10);--card:rgba(15,15,35,.035);
+  --gP:rgba(139,92,246,.25);--gG:rgba(245,158,11,.25);
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100%}
@@ -321,7 +323,7 @@ textarea{resize:vertical;min-height:70px;font-weight:400}
 .print-only{display:none}
 @media print{
   body{background:#fff;color:#000}
-  header,.stepper,.btn,.btn-primary,.btn-secondary,.btn-row,.codes-actions,.modal-header button,.btn-icon-hdr,.neon-brand{display:none!important}
+  header,.stepper,.btn,.btn-primary,.btn-secondary,.btn-row,.codes-actions,.modal-header button,.btn-icon-hdr,.neon-brand,.no-print{display:none!important}
   .modal-content{box-shadow:none;border:none;max-height:none;overflow:visible}
   .overlay{position:static;background:#fff;padding:0;display:block!important}
   .code-card{break-inside:avoid;border:1px solid #999;page-break-inside:avoid}
@@ -657,6 +659,14 @@ textarea{resize:vertical;min-height:70px;font-weight:400}
         <h2 style="text-align:center;margin-bottom:.5rem">🎰 EduRoulette — Codes d'accès élèves</h2>
         <p style="text-align:center;font-size:.9rem;margin-bottom:1rem">Conserve ce code soigneusement. URL : <strong id="print-url">eleve.html</strong></p>
       </div>
+      <div class="no-print" style="background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:.7rem .9rem;margin-bottom:.9rem">
+        <div style="font-size:.78rem;font-weight:800;margin-bottom:.5rem;color:var(--dim);text-transform:uppercase;letter-spacing:.5px">📄 Bilan PDF individuel — période</div>
+        <div style="display:flex;gap:.7rem;flex-wrap:wrap;align-items:flex-end">
+          <div><label style="font-size:.72rem">Du</label><input type="date" id="bilan-pdf-du"></div>
+          <div><label style="font-size:.72rem">Au</label><input type="date" id="bilan-pdf-au"></div>
+        </div>
+        <p style="font-size:.72rem;color:var(--dim);margin-top:.5rem">Nécessite la connexion Google Sheet configurée. Clique « 📄 PDF » sur la carte d'un élève ci-dessous.</p>
+      </div>
       <div id="codes-list" class="codes-list"></div>
     </div>
   </div>
@@ -819,7 +829,7 @@ textarea{resize:vertical;min-height:70px;font-weight:400}
     <div class="modal-body">
       <p style="font-size:.85rem;color:var(--dim);margin-bottom:.6rem">Copie ce code, va sur <strong>script.google.com</strong>, crée un nouveau projet, colle ce code, sauvegarde, déploie en Application Web (accès "Tout le monde"), puis copie l'URL dans les paramètres.</p>
       <button class="btn-primary-sm" onclick="App.settings.copyAppsScriptCode()" style="margin-bottom:.7rem">📋 Copier le code</button>
-      <pre id="apps-script-code" style="background:var(--bg3);padding:1rem;border-radius:9px;font-size:.7rem;color:#a8b0c0;max-height:380px;overflow-y:auto;white-space:pre;font-family:'Courier New',monospace;line-height:1.5;border:1px solid var(--border)"></pre>
+      <pre id="apps-script-code" style="background:var(--bg3);padding:1rem;border-radius:9px;font-size:.7rem;color:#3a4356;max-height:380px;overflow-y:auto;white-space:pre;font-family:'Courier New',monospace;line-height:1.5;border:1px solid var(--border)"></pre>
     </div>
   </div>
 </div>
@@ -863,6 +873,7 @@ function doPost(e) {
     if (action === 'sync_classe') return syncClasse(data);
     if (action === 'save_session') return saveSession(data);
     if (action === 'get_progression') return getProgression(data);
+    if (action === 'get_history') return getHistory(data);
     return jsonResponse({ok:false, error:'unknown_action'});
   } catch(err) {
     return jsonResponse({ok:false, error:err.toString()});
@@ -882,7 +893,7 @@ function setup() {
   }
   if (!ss.getSheetByName('Sessions')) {
     const s = ss.insertSheet('Sessions');
-    s.getRange(1,1,1,7).setValues([['Date','Code_eleve','Classe','Theme','Difficulte','Note','Note_max']]);
+    s.getRange(1,1,1,9).setValues([['Date','Code_eleve','Classe','Theme','Difficulte','Note','Note_max','Question','Reponse']]);
   }
   if (!ss.getSheetByName('Cumul')) {
     const s = ss.insertSheet('Cumul');
@@ -915,7 +926,7 @@ function saveSession(data) {
   const cumul = ss.getSheetByName('Cumul');
   const dateNow = new Date().toISOString();
   (data.results || []).forEach(r => {
-    sheet.appendRow([dateNow, r.code, r.classe, r.theme, r.difficulte, r.note, r.note_max]);
+    sheet.appendRow([dateNow, r.code, r.classe, r.theme, r.difficulte, r.note, r.note_max, r.question || '', r.reponse || '']);
     // Update cumul
     if (cumul) {
       const all = cumul.getDataRange().getValues();
@@ -969,6 +980,39 @@ function getProgression(data) {
     else result[code] = {nb:0, pts:0, max:0};
   });
   return jsonResponse({ok:true, progression:result});
+}
+
+function getHistory(data) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sessions = ss.getSheetByName('Sessions');
+  if (!sessions) return jsonResponse({ok:false, error:'not_setup'});
+  const code = data.code;
+  const from = data.from ? new Date(data.from + 'T00:00:00') : null;
+  const to = data.to ? new Date(data.to + 'T23:59:59') : null;
+  const rows = sessions.getDataRange().getValues();
+  const historique = [];
+  for (let i = 1; i < rows.length; i++) {
+    const r = rows[i];
+    if (r[1] !== code) continue;
+    const d = new Date(r[0]);
+    if (from && d < from) continue;
+    if (to && d > to) continue;
+    historique.push({
+      date: r[0], classe: r[2], theme: r[3], difficulte: r[4],
+      note: r[5], note_max: r[6],
+      question: r[7] || '', reponse: r[8] || '',
+    });
+  }
+  historique.sort((a,b) => new Date(a.date) - new Date(b.date));
+  let eleveInfo = {code:code, nom:'', prenom:'', classe:''};
+  const eleves = ss.getSheetByName('Élèves');
+  if (eleves) {
+    const all = eleves.getDataRange().getValues();
+    for (let i = 1; i < all.length; i++) {
+      if (all[i][0] === code) { eleveInfo = {code:code, nom:all[i][1], prenom:all[i][2], classe:all[i][3]}; break; }
+    }
+  }
+  return jsonResponse({ok:true, eleve:eleveInfo, historique:historique});
 }`;
 
 // ═════════════════════════════════════════════════════════════════
@@ -1008,6 +1052,13 @@ function displayName(e) {
   const nom = (e.nom || '').toUpperCase();
   const initiales = nom.substring(0, 2);
   return `${prenom} ${initiales}.`;
+}
+
+function formatDateFR(d) {
+  if (!d) return '—';
+  const date = new Date(d);
+  if (isNaN(date.getTime())) return d;
+  return date.toLocaleDateString('fr-FR');
 }
 
 function generateAvatar(seed) {
@@ -1863,6 +1914,7 @@ function validateScore() {
     pts_max: ptsMax,
     diff: q.d,
     q: q.q,
+    r: q.r,
   });
   // Update class stats
   const c = state.classes[state.currentClasse];
@@ -1977,6 +2029,8 @@ async function saveSessionToGAS() {
         difficulte: s.diff,
         note: s.pts,
         note_max: s.pts_max,
+        question: s.q,
+        reponse: s.r,
       });
     });
   });
@@ -2034,12 +2088,20 @@ const codes = {
     document.getElementById('codes-classe-nom').textContent = c.nom;
     const eleveUrl = window.location.href.replace(/index\.html$|\/$/,'') + '/eleve.html';
     document.getElementById('print-url').textContent = eleveUrl;
+    // Défaut période : depuis le 1er septembre de l'année scolaire en cours
+    const now = new Date();
+    const anneeDebut = now.getMonth() < 7 ? now.getFullYear() - 1 : now.getFullYear();
+    const du = document.getElementById('bilan-pdf-du');
+    const au = document.getElementById('bilan-pdf-au');
+    if (du && !du.value) du.value = `${anneeDebut}-09-01`;
+    if (au && !au.value) au.value = now.toISOString().split('T')[0];
     const list = document.getElementById('codes-list');
     list.innerHTML = c.eleves.map(e => `
       <div class="code-card">
         <div style="display:flex;align-items:center;gap:.5rem;justify-content:center;margin-bottom:.3rem"><div class="avatar" style="width:36px;height:36px">${generateAvatar(e.code)}</div><div class="cc-name">${displayName(e)}</div></div>
         <div class="cc-code">${e.code}</div>
         <div class="cc-qr" id="qr-${e.code}"></div>
+        <button class="btn-small no-print" style="margin-top:.4rem;width:100%" onclick="App.codes.generatePDF('${e.code}')">📄 Bilan PDF</button>
       </div>
     `).join('');
     // Generate QR codes
@@ -2075,6 +2137,78 @@ const codes = {
   syncToGAS() {
     if (!state.scriptUrl) { toast('Configure d\'abord l\'URL Google Apps Script', 'error'); return; }
     syncClasseToGAS(state.currentClasse);
+  },
+  async generatePDF(code) {
+    if (!state.scriptUrl) { toast('Configure d\'abord la connexion Google Sheet (Paramètres)', 'error'); return; }
+    const du = document.getElementById('bilan-pdf-du').value;
+    const au = document.getElementById('bilan-pdf-au').value;
+    if (!du || !au) { toast('Choisis une période (du / au)', 'error'); return; }
+    toast('☁️ Récupération de l\'historique...', 'info');
+    let res;
+    try {
+      res = await gasCall('get_history', {code, from: du, to: au});
+    } catch(e) {
+      toast('❌ Connexion au Google Sheet impossible', 'error');
+      return;
+    }
+    if (!res || !res.ok) { toast('❌ ' + (res && res.error || 'Erreur inconnue'), 'error'); return; }
+    const { eleve, historique } = res;
+    if (!window.jspdf) { toast('❌ Librairie PDF non chargée', 'error'); return; }
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(14);
+    doc.text('Collège Jean de Beaumont — Villemomble', pageWidth / 2, 16, {align: 'center'});
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(11);
+    doc.text('EduRoulette — Bilan individuel de suivi', pageWidth / 2, 23, {align: 'center'});
+
+    const nomComplet = `${eleve.prenom || ''} ${eleve.nom || ''}`.trim() || code;
+    doc.setFontSize(10);
+    doc.text(`Élève : ${nomComplet}`, 14, 34);
+    doc.text(`Classe : ${eleve.classe || '—'}`, 14, 40);
+    doc.text(`Code : ${code}`, 14, 46);
+    doc.text(`Période : du ${formatDateFR(du)} au ${formatDateFR(au)}`, 14, 52);
+
+    if (!historique.length) {
+      doc.setFontSize(10);
+      doc.text('Aucune question enregistrée sur cette période.', 14, 64);
+    } else {
+      const body = historique.map(h => [
+        formatDateFR(h.date),
+        h.theme || '—',
+        h.difficulte || '—',
+        h.question || '—',
+        h.reponse || '—',
+        `${h.note}/${h.note_max}`,
+      ]);
+      doc.autoTable({
+        startY: 58,
+        head: [['Date', 'Thème', 'Difficulté', 'Question', 'Réponse attendue', 'Note']],
+        body,
+        styles: {fontSize: 8, cellPadding: 2, valign: 'top'},
+        headStyles: {fillColor: [139, 92, 246]},
+        columnStyles: {0: {cellWidth: 20}, 1: {cellWidth: 26}, 2: {cellWidth: 16}, 3: {cellWidth: 52}, 4: {cellWidth: 52}, 5: {cellWidth: 12}},
+      });
+      const totalPts = historique.reduce((s, h) => s + Number(h.note || 0), 0);
+      const totalMax = historique.reduce((s, h) => s + Number(h.note_max || 0), 0);
+      const noteFinale = totalMax > 0 ? (totalPts / totalMax * 20).toFixed(1) : '—';
+      let finalY = doc.lastAutoTable.finalY + 8;
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(11);
+      doc.text(`Questions posées : ${historique.length}   —   Points : ${totalPts}/${totalMax}   —   Note finale : ${noteFinale}/20`, 14, finalY);
+      const missing = historique.some(h => !h.question);
+      if (missing) {
+        finalY += 8;
+        doc.setFont('helvetica', 'italic'); doc.setFontSize(8);
+        doc.text("Certaines lignes antérieures à la mise à jour du suivi ne comportent pas le détail question/réponse.", 14, finalY, {maxWidth: pageWidth - 28});
+      }
+    }
+
+    doc.setFont('helvetica', 'italic'); doc.setFontSize(8);
+    doc.text('EduRoulette V3 — BeluSoft-Tchapy', pageWidth / 2, doc.internal.pageSize.getHeight() - 10, {align: 'center'});
+
+    doc.save(`bilan_${code}_${du}_${au}.pdf`);
+    toast('📄 PDF généré', 'success');
   },
 };
 
