@@ -373,6 +373,7 @@ textarea{resize:vertical;min-height:70px;font-weight:400}
 <div class="screen active" id="screen-config">
   <div class="card">
     <h2>🏫 Mes classes</h2>
+    <button class="btn-text" onclick="App.restoreFromGAS()" style="margin-bottom:.6rem">☁️ Charger depuis Google Sheet</button>
     <div id="saved-classes-section" class="hidden">
       <div class="saved-classes-label">Classes enregistrées :</div>
       <div class="saved-classes-list" id="saved-classes-list"></div>
@@ -405,10 +406,17 @@ textarea{resize:vertical;min-height:70px;font-weight:400}
         <button class="btn-small" onclick="App.showClasseList()">Changer</button>
       </div>
       <div class="eleves-list-toggle">
-        <button class="btn-text" onclick="App.toggleElevesList()">👁 Voir la liste des élèves</button>
+        <button class="btn-text" onclick="App.toggleElevesList()">👁 Voir / gérer la liste des élèves</button>
         <button class="btn-text" onclick="App.codes.show()" style="margin-left:1rem">📋 Codes élèves</button>
       </div>
-      <div class="eleves-list hidden" id="eleves-list-active"></div>
+      <div class="eleves-list hidden" id="eleves-list-active">
+        <div id="eleves-manage-list"></div>
+        <div class="naming-row" style="margin-top:.6rem">
+          <input type="text" id="add-eleve-nom" placeholder="NOM" class="input-classname" style="max-width:140px">
+          <input type="text" id="add-eleve-prenom" placeholder="Prénom" class="input-classname" style="max-width:140px">
+          <button class="btn-primary-sm" onclick="App.addEleve()">➕ Ajouter cet élève</button>
+        </div>
+      </div>
       <div class="sync-status hidden" id="sync-status"></div>
       <div class="add-another">
         <button class="btn-secondary" onclick="App.addAnotherClasse()">➕ Ajouter une autre classe</button>
@@ -874,6 +882,7 @@ function doPost(e) {
     if (action === 'save_session') return saveSession(data);
     if (action === 'get_progression') return getProgression(data);
     if (action === 'get_history') return getHistory(data);
+    if (action === 'get_all_classes') return getAllClasses(data);
     return jsonResponse({ok:false, error:'unknown_action'});
   } catch(err) {
     return jsonResponse({ok:false, error:err.toString()});
@@ -1013,6 +1022,22 @@ function getHistory(data) {
     }
   }
   return jsonResponse({ok:true, eleve:eleveInfo, historique:historique});
+}
+
+function getAllClasses(data) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const eleves = ss.getSheetByName('Élèves');
+  if (!eleves) return jsonResponse({ok:false, error:'not_setup'});
+  const all = eleves.getDataRange().getValues();
+  const classes = {};
+  for (let i = 1; i < all.length; i++) {
+    const r = all[i];
+    const code = r[0], nom = r[1], prenom = r[2], classe = r[3];
+    if (!code || !classe) continue;
+    if (!classes[classe]) classes[classe] = [];
+    classes[classe].push({code:code, nom:nom, prenom:prenom});
+  }
+  return jsonResponse({ok:true, classes:classes});
 }`;
 
 // ═════════════════════════════════════════════════════════════════
@@ -1283,6 +1308,19 @@ function generateCode(classeId, idx) {
   return `${prefix}-${String(idx+1).padStart(3,'0')}`;
 }
 
+// Code sûr en cas d'ajout après suppression (pas de collision d'index) :
+// se base sur le plus grand suffixe numérique déjà utilisé dans la classe.
+function nextEleveCode(classeId, eleves) {
+  const prefix = classeId.toUpperCase().replace(/[^A-Z0-9]/g,'').substring(0,4);
+  let max = 0;
+  const re = new RegExp('^' + prefix + '-(\\d+)$');
+  (eleves||[]).forEach(e => {
+    const m = re.exec(e.code || '');
+    if (m) { const n = parseInt(m[1],10); if (n > max) max = n; }
+  });
+  return `${prefix}-${String(max+1).padStart(3,'0')}`;
+}
+
 // ─── CLASSE MANAGEMENT ───────────────────────────────────────────────
 let pendingEleves = null;
 
@@ -1373,8 +1411,39 @@ function showClasseList() {
 function renderElevesList() {
   if (!state.currentClasse) return;
   const c = state.classes[state.currentClasse];
-  const ul = document.getElementById('eleves-list-active');
-  ul.innerHTML = '<ul>' + c.eleves.map(e => `<li style="display:flex;align-items:center;gap:.4rem"><span style="width:24px;height:24px;display:inline-block;border-radius:50%;overflow:hidden;border:1px solid var(--gold);flex-shrink:0">${generateAvatar(e.code||e.prenom+e.nom)}</span> ${displayName(e)}</li>`).join('') + '</ul>';
+  const ul = document.getElementById('eleves-manage-list');
+  ul.innerHTML = '<ul>' + c.eleves.map(e => `<li style="display:flex;align-items:center;gap:.4rem"><span style="width:24px;height:24px;display:inline-block;border-radius:50%;overflow:hidden;border:1px solid var(--gold);flex-shrink:0">${generateAvatar(e.code||e.prenom+e.nom)}</span> <span style="flex:1">${displayName(e)}</span> <button class="btn-small danger" style="padding:.15rem .5rem" onclick="App.removeEleve('${e.code}')" title="Retirer de la classe">🗑</button></li>`).join('') + '</ul>';
+}
+
+function addEleve() {
+  if (!state.currentClasse) { toast('Sélectionne d\'abord une classe', 'error'); return; }
+  const c = state.classes[state.currentClasse];
+  const nomInput = document.getElementById('add-eleve-nom');
+  const prenomInput = document.getElementById('add-eleve-prenom');
+  const nom = nomInput.value.trim();
+  const prenom = prenomInput.value.trim();
+  if (!nom) { toast('Indique au moins le nom', 'error'); return; }
+  const code = nextEleveCode(state.currentClasse, c.eleves);
+  c.eleves.push({nom, prenom, code});
+  nomInput.value = '';
+  prenomInput.value = '';
+  saveStorage();
+  renderClasses();
+  toast(`✅ ${prenom} ${nom} ajouté(e) — code ${code}`, 'success');
+  if (state.scriptUrl) syncClasseToGAS(state.currentClasse);
+}
+
+function removeEleve(code) {
+  if (!state.currentClasse) return;
+  const c = state.classes[state.currentClasse];
+  const e = c.eleves.find(x => x.code === code);
+  if (!e) return;
+  if (!confirm(`Retirer ${e.prenom} ${e.nom} de la classe ?\n(Son historique de résultats déjà enregistré dans le Google Sheet est conservé.)`)) return;
+  c.eleves = c.eleves.filter(x => x.code !== code);
+  saveStorage();
+  renderClasses();
+  toast(`🗑 ${e.prenom} ${e.nom} retiré(e) de la classe`, 'info');
+  if (state.scriptUrl) syncClasseToGAS(state.currentClasse);
 }
 
 function toggleElevesList() {
@@ -1428,6 +1497,37 @@ async function syncClasseToGAS(classeId) {
     status.classList.remove('pending','ok');
     status.classList.add('ko');
     status.textContent = `❌ Erreur de sync : ${e.message}`;
+  }
+}
+
+// Restauration non-destructive depuis le Google Sheet :
+// ajoute les classes/élèves distants absents localement, sans écraser
+// les modifications locales plus récentes.
+async function restoreFromGAS() {
+  if (!state.scriptUrl) { toast('Configure d\'abord l\'URL du Google Apps Script dans ⚙️ Paramètres', 'error'); return; }
+  toast('☁️ Chargement depuis Google Sheet...', 'info');
+  try {
+    const result = await gasCall('get_all_classes');
+    if (!result.ok) throw new Error(result.error || 'Erreur inconnue');
+    let added = 0, merged = 0;
+    Object.keys(result.classes || {}).forEach(nomClasse => {
+      const classeId = nomClasse.replace(/\s+/g,'_').toLowerCase();
+      const elevesDistants = result.classes[nomClasse];
+      if (!state.classes[classeId]) {
+        state.classes[classeId] = { nom: nomClasse, eleves: elevesDistants, stats: {}, createdAt: Date.now() };
+        added++;
+      } else {
+        const local = state.classes[classeId];
+        const codesLocaux = new Set(local.eleves.map(e => e.code));
+        elevesDistants.forEach(e => { if (!codesLocaux.has(e.code)) { local.eleves.push(e); merged++; } });
+      }
+    });
+    if (!state.currentClasse) state.currentClasse = Object.keys(state.classes)[0] || null;
+    saveStorage();
+    renderClasses();
+    toast(`✅ Google Sheet chargé : ${added} classe(s) ajoutée(s), ${merged} élève(s) fusionné(s)`, 'success');
+  } catch(e) {
+    toast(`❌ Impossible de charger : ${e.message}`, 'error');
   }
 }
 
@@ -2602,7 +2702,7 @@ return {
   goTo, goToTheme, goToTirage, startQuestions, updateModeUI, displayName, generateAvatar,
   selectTheme, filterThemes, setDiff,
   confirmClasse, selectClasse, showClasseList, toggleElevesList,
-  addAnotherClasse, deleteCurrentClasse,
+  addAnotherClasse, deleteCurrentClasse, addEleve, removeEleve, restoreFromGAS,
   showAnswer, nextQuestion, setScore, setScoreHalf, setScoreMax, setScoreManual, validateScore,
   exportCSV, nouvelleSession, generateGoogleForm,
   slotMachine, timer, settings, codes, editor, storage,
