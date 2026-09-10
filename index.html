@@ -156,20 +156,20 @@ textarea{resize:vertical;min-height:70px;font-weight:400}
 .questions-available{margin-top:.6rem;text-align:center;color:var(--dim);font-size:.82rem}
 
 /* SLOT MACHINE */
-.config-tags{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1rem}
-.cfg-tag{padding:.25rem .7rem;border-radius:14px;font-size:.72rem;font-weight:800;background:var(--pD);color:var(--purple);border:1px solid rgba(139,92,246,.25)}
-.slot-area{display:flex;gap:.7rem;justify-content:center;flex-wrap:wrap;margin:1.4rem 0;min-height:120px;align-items:center}
-.slot{background:linear-gradient(135deg,var(--bg3),var(--bg4));border:2px solid var(--border);border-radius:14px;padding:1.1rem .9rem;min-width:130px;max-width:170px;text-align:center;transition:all .3s;flex:0 1 150px}
+.config-tags{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem}
+.cfg-tag{padding:.45rem 1.05rem;border-radius:16px;font-size:1.35rem;font-weight:800;background:var(--pD);color:var(--purple);border:1px solid rgba(139,92,246,.25)}
+.slot-area{display:flex;gap:.9rem;justify-content:center;flex-wrap:wrap;margin:1.4rem 0;min-height:150px;align-items:center}
+.slot{background:linear-gradient(135deg,var(--bg3),var(--bg4));border:2px solid var(--border);border-radius:14px;padding:1.4rem 1.1rem;min-width:190px;max-width:240px;text-align:center;transition:all .3s;flex:0 1 210px}
 .slot.spinning{border-color:var(--gold);animation:slotPulse .5s ease infinite}
 .slot.locked{border-color:var(--green);background:linear-gradient(135deg,rgba(16,185,129,.1),var(--bg3))}
 @keyframes slotPulse{0%,100%{transform:scale(1);box-shadow:0 0 0 0 var(--gG)}50%{transform:scale(1.04);box-shadow:0 0 0 8px transparent}}
-.slot .slot-num{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--gold);line-height:1}
-.slot .slot-name{font-weight:800;font-size:1rem;margin-top:.4rem;line-height:1.2;min-height:1.4em;font-family:'Bebas Neue',sans-serif;letter-spacing:1px}
+.slot .slot-num{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;color:var(--gold);line-height:1}
+.slot .slot-name{font-weight:800;font-size:1.9rem;margin-top:.5rem;line-height:1.15;min-height:1.4em;font-family:'Bebas Neue',sans-serif;letter-spacing:1px;color:var(--text)}
 .spin-controls{display:flex;justify-content:center;margin-bottom:.8rem}
-.btn-spin{background:linear-gradient(135deg,var(--gold),var(--g2));color:#0C0C1E;padding:.95rem 2.4rem;font-size:1.05rem;font-weight:900;letter-spacing:1px;border-radius:11px;border:none;cursor:pointer;box-shadow:0 4px 24px var(--gG);transition:all .2s;font-family:'Nunito',sans-serif}
+.btn-spin{background:linear-gradient(135deg,var(--gold),var(--g2));color:#0C0C1E;padding:1.3rem 3rem;font-size:1.95rem;font-weight:900;letter-spacing:1px;border-radius:12px;border:none;cursor:pointer;box-shadow:0 4px 24px var(--gG);transition:all .2s;font-family:'Nunito',sans-serif}
 .btn-spin:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 36px var(--gG)}
 .btn-spin:disabled{opacity:.4;cursor:not-allowed}
-.equity-info{font-size:.78rem;color:var(--dim);text-align:center;margin-top:.6rem}
+.equity-info{font-size:1.45rem;font-weight:700;color:var(--p2);text-align:center;margin-top:.7rem}
 
 /* QUESTION */
 .question-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.7rem}
@@ -316,8 +316,7 @@ textarea{resize:vertical;min-height:70px;font-weight:400}
 .avatar-name.big{font-size:2.2rem;text-shadow:0 0 16px rgba(245,158,11,.3)}
 .avatar-name.xl{font-size:2.8rem;text-shadow:0 0 20px rgba(245,158,11,.4)}
 .avatar-tag{font-size:.72rem;color:var(--dim);font-weight:700}
-.slot .avatar{width:44px;height:44px;margin:0 auto .3rem}
-.slot .slot-name{font-size:.85rem!important}
+.slot .avatar{width:56px;height:56px;margin:0 auto .3rem}
 
 .hidden{display:none!important}
 .print-only{display:none}
@@ -421,6 +420,52 @@ textarea{resize:vertical;min-height:70px;font-weight:400}
       <div class="add-another">
         <button class="btn-secondary" onclick="App.addAnotherClasse()">➕ Ajouter une autre classe</button>
         <button class="btn-small danger" onclick="App.deleteCurrentClasse()">🗑 Supprimer cette classe</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>📥 Importer des questions</h2>
+    <p style="font-size:.83rem;color:var(--dim);margin-bottom:.7rem">Ajoute en une fois une banque de questions (les tiennes, ou celles d'un collègue) à partir d'un fichier CSV. Chaque ligne doit contenir : <strong>Thème · Question · Réponse · Difficulté</strong>.</p>
+
+    <div id="home-import-help" style="background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:.8rem 1rem;font-size:.78rem;margin-bottom:.9rem;line-height:1.6">
+      <strong style="color:var(--gold)">Format attendu du fichier :</strong>
+      <ul style="list-style:none;margin-top:.4rem">
+        <li>• <strong>4 colonnes, dans cet ordre</strong> : Thème ; Question ; Réponse ; Difficulté</li>
+        <li>• <strong>Séparateur</strong> : point-virgule (;) recommandé pour Excel français — la virgule est aussi acceptée</li>
+        <li>• <strong>Encodage</strong> : UTF-8 (pour préserver les accents)</li>
+        <li>• <strong>1ère ligne</strong> : en-têtes, ex. <code>Theme;Question;Reponse;Difficulte</code> (elle est ignorée à l'import)</li>
+        <li>• <strong>Difficulté</strong> : <code>facile</code>, <code>moyen</code> ou <code>difficile</code></li>
+        <li>• Si le <strong>thème existe déjà</strong> (banque officielle ou perso) → les questions y sont ajoutées</li>
+        <li>• Si c'est un <strong>nouveau thème</strong> → il est créé automatiquement comme thème personnel</li>
+      </ul>
+      <div style="margin-top:.5rem;padding:.4rem .6rem;background:var(--bg);border-radius:6px;font-family:'Courier New',monospace;font-size:.72rem;color:var(--cyan)">Theme;Question;Reponse;Difficulte<br>Les réseaux;Qu'est-ce qu'une IP ?;C'est un numéro unique.;facile</div>
+      <p style="margin-top:.6rem;color:var(--dim)">📊 <strong>Depuis Excel ou Google Sheets</strong> : prépare ton tableau avec ces 4 colonnes, puis fais <strong>Fichier → Enregistrer sous / Télécharger → CSV (séparateur point-virgule)</strong> avant de l'importer ici. L'application lit uniquement un fichier CSV — elle n'ouvre pas directement un .xlsx ou un lien Google Sheet.</p>
+    </div>
+
+    <div style="display:flex;gap:.5rem;margin-bottom:.8rem;flex-wrap:wrap">
+      <button class="btn-secondary" onclick="App.editor.downloadTemplate()">📄 Télécharger un modèle CSV vide</button>
+    </div>
+
+    <div id="home-import-drop-zone" class="drop-zone" style="padding:1.4rem 1rem">
+      <div class="drop-icon">📥</div>
+      <div class="drop-text">Glisser-déposer le CSV de questions ici</div>
+      <div class="drop-sub">ou</div>
+      <label class="btn-upload">
+        Choisir un fichier CSV
+        <input type="file" id="home-import-file-input" accept=".csv,.txt" hidden>
+      </label>
+    </div>
+
+    <div id="home-import-preview" class="hidden" style="margin-top:.9rem">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem;flex-wrap:wrap;gap:.4rem">
+        <div style="font-weight:800;font-size:.85rem">📋 Aperçu de l'import</div>
+        <div id="home-import-summary" style="font-size:.75rem;color:var(--dim)"></div>
+      </div>
+      <div id="home-import-preview-list" style="max-height:280px;overflow-y:auto;background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:.5rem"></div>
+      <div style="display:flex;gap:.5rem;margin-top:.7rem;flex-wrap:wrap">
+        <button class="btn-primary-sm" id="home-import-confirm-btn" onclick="App.homeImport.confirm()">✅ Importer les questions valides</button>
+        <button class="btn-secondary" onclick="App.homeImport.cancel()">Annuler</button>
       </div>
     </div>
   </div>
@@ -1259,6 +1304,17 @@ function playTone(f,type='sine',dur=0.15,vol=0.3) {
 }
 function playSlot(i) { setTimeout(()=>playTone(440+i*110,'square',0.12,0.2), i*80); }
 function playWin() { [523,659,784,1047].forEach((f,i)=>setTimeout(()=>playTone(f,'sine',0.25,0.3), i*120)); }
+// Décompte final du chronomètre : tic sonore (plus fort et plus aigu à l'approche de 0),
+// puis carillon "Ding Dong" bien audible quand le temps est écoulé.
+function playCountdownTick(remaining) {
+  if (remaining <= 5) playTone(950, 'square', 0.14, 0.55);
+  else playTone(700, 'square', 0.12, 0.4);
+}
+function playDingDong() {
+  if (state.muted) return;
+  playTone(1046, 'sine', 0.7, 0.6);
+  setTimeout(() => playTone(784, 'sine', 0.9, 0.6), 350);
+}
 function playScore(t) {
   if (t==='max') { playTone(660,'sine',0.15,0.3); setTimeout(()=>playTone(880,'sine',0.2,0.3),150); }
   else if (t==='half') playTone(440,'triangle',0.2,0.25);
@@ -2037,10 +2093,10 @@ const timer = {
       if (state.timerPaused) return;
       state.timerRemaining--;
       this.update();
-      if (state.timerRemaining <= 5 && state.timerRemaining > 0) playTone(880,'sine',0.1,0.2);
+      if (state.timerRemaining <= 20 && state.timerRemaining > 0) playCountdownTick(state.timerRemaining);
       if (state.timerRemaining <= 0) {
         this.stop();
-        playTone(220,'square',0.5,0.3);
+        playDingDong();
         toast('⏰ Temps écoulé !', 'info');
       }
     }, 1000);
@@ -2633,6 +2689,100 @@ const editor = {
   },
 };
 
+// ─── IMPORT DE QUESTIONS DEPUIS L'ÉCRAN D'ACCUEIL ───────────────────────────
+// Même logique de parsing que l'éditeur (App.editor.parseQuestionsCSV),
+// mais câblée sur la carte "📥 Importer des questions" de l'écran de config.
+const homeImport = {
+  pending: null,
+  setup() {
+    const dz = document.getElementById('home-import-drop-zone');
+    const fi = document.getElementById('home-import-file-input');
+    if (!dz || !fi || dz._wired) return;
+    dz._wired = true;
+    dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
+    dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+    dz.addEventListener('drop', e => {
+      e.preventDefault();
+      dz.classList.remove('drag-over');
+      if (e.dataTransfer.files[0]) this.handleFile(e.dataTransfer.files[0]);
+    });
+    fi.addEventListener('change', e => { if (e.target.files[0]) this.handleFile(e.target.files[0]); });
+  },
+  handleFile(file) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const parsed = editor.parseQuestionsCSV(e.target.result);
+        this.pending = parsed;
+        this.showPreview(parsed);
+      } catch(err) {
+        toast('❌ Erreur lecture CSV : ' + err.message, 'error');
+      }
+    };
+    reader.readAsText(file, 'UTF-8');
+  },
+  showPreview({valid, invalid}) {
+    const preview = document.getElementById('home-import-preview');
+    const list = document.getElementById('home-import-preview-list');
+    const summary = document.getElementById('home-import-summary');
+    const allThemes = getAllThemes();
+    const byTheme = {};
+    valid.forEach(q => {
+      if (!byTheme[q.theme]) byTheme[q.theme] = {existing: !!allThemes[q.theme], questions:[]};
+      byTheme[q.theme].questions.push(q);
+    });
+    const newThemes = Object.keys(byTheme).filter(t => !byTheme[t].existing).length;
+    const existingThemes = Object.keys(byTheme).filter(t => byTheme[t].existing).length;
+    summary.innerHTML = `${valid.length} valides · ${invalid.length} erreurs · ${existingThemes} thème(s) existant(s) · ${newThemes} nouveau(x) thème(s)`;
+    let html = '';
+    Object.keys(byTheme).forEach(theme => {
+      const data = byTheme[theme];
+      const isNew = !data.existing;
+      const counts = {facile:0, moyen:0, difficile:0};
+      data.questions.forEach(q => counts[q.d]++);
+      html += `<div style="margin-bottom:.6rem;padding:.5rem .7rem;background:var(--card);border-radius:7px;border-left:3px solid ${isNew?'var(--cyan)':'var(--purple)'}">
+        <div style="font-weight:800;font-size:.83rem">${isNew?'🆕 ':''}${theme} ${isNew?'<span style="color:var(--cyan);font-size:.7rem">(nouveau)</span>':'<span style="color:var(--dim);font-size:.7rem">(existant)</span>'}</div>
+        <div style="font-size:.72rem;color:var(--dim);margin-top:.2rem">${data.questions.length} questions à ajouter — 🟢 ${counts.facile} · 🟡 ${counts.moyen} · 🔴 ${counts.difficile}</div>
+      </div>`;
+    });
+    if (invalid.length > 0) {
+      html += `<div style="margin-top:.7rem;padding:.5rem .7rem;background:rgba(239,68,68,.08);border-radius:7px;border-left:3px solid var(--red)">
+        <div style="font-weight:800;font-size:.83rem;color:var(--red)">⚠️ ${invalid.length} ligne(s) invalide(s) — ignorées</div>
+        <div style="font-size:.7rem;color:var(--dim);margin-top:.3rem;max-height:80px;overflow-y:auto">
+          ${invalid.slice(0,10).map(e => `Ligne ${e.line} : ${e.reason}`).join('<br>')}
+          ${invalid.length>10?`<br>… et ${invalid.length-10} autres`:''}
+        </div>
+      </div>`;
+    }
+    list.innerHTML = html || '<div style="padding:1rem;text-align:center;color:var(--muted)">Aucune question valide trouvée</div>';
+    preview.classList.remove('hidden');
+    const btn = document.getElementById('home-import-confirm-btn');
+    btn.disabled = valid.length === 0;
+    btn.textContent = valid.length === 0 ? '⚠️ Aucune question à importer' : `✅ Importer ${valid.length} question${valid.length>1?'s':''}`;
+  },
+  confirm() {
+    if (!this.pending || !this.pending.valid.length) return;
+    const {valid} = this.pending;
+    let added = 0, themesCreated = 0;
+    valid.forEach(q => {
+      if (!state.customThemes[q.theme]) {
+        state.customThemes[q.theme] = [];
+        themesCreated++;
+      }
+      state.customThemes[q.theme].push({q: q.q, r: q.r, d: q.d});
+      added++;
+    });
+    saveStorage();
+    toast(`✅ ${added} questions importées${themesCreated?' · '+themesCreated+' nouveau(x) thème(s)':''}`, 'success');
+    this.cancel();
+  },
+  cancel() {
+    this.pending = null;
+    document.getElementById('home-import-preview').classList.add('hidden');
+    document.getElementById('home-import-file-input').value = '';
+  },
+};
+
 // ─── STORAGE / RESET ───────────────────────────────────────────────
 const storage = {
   resetConfirm() {
@@ -2681,6 +2831,7 @@ function init() {
     if (e.dataTransfer.files[0]) handleCSVFile(e.dataTransfer.files[0]);
   });
   fi.addEventListener('change', e => { if (e.target.files[0]) handleCSVFile(e.target.files[0]); });
+  homeImport.setup();
 
   // Add type change
   document.getElementById('editor-add-type').addEventListener('change', () => editor.toggleAddType());
@@ -2705,7 +2856,7 @@ return {
   addAnotherClasse, deleteCurrentClasse, addEleve, removeEleve, restoreFromGAS,
   showAnswer, nextQuestion, setScore, setScoreHalf, setScoreMax, setScoreManual, validateScore,
   exportCSV, nouvelleSession, generateGoogleForm,
-  slotMachine, timer, settings, codes, editor, storage,
+  slotMachine, timer, settings, codes, editor, storage, homeImport,
   toggleMute,
 };
 })();
